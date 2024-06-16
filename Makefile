@@ -1,0 +1,49 @@
+# Include variables from the .env file
+include .env
+
+# ==================================================================================== #
+# HELPERS
+# ==================================================================================== #
+
+## help: print this help message
+.PHONY: help
+help:
+	@echo 'Usage:'
+	@sed -n 's/^##//p' ${MAKEFILE_LIST} | column -t -s ':' | sed -e 's/^/ /'
+
+# ==================================================================================== #
+# DEVELOPMENT
+# ==================================================================================== #
+
+## run/api: run the cmd/api application
+.PHONY: run/booky
+run/booky:
+	go run ./cmd/booky
+
+# ==================================================================================== #
+# QUALITY CONTROL
+# ==================================================================================== #
+
+## audit: tidy dependencies, format, vet and test all code
+.PHONY: audit
+audit:
+	@echo 'Formatting code...'
+	go fmt ./...
+	@echo 'Vetting code...'
+	go vet ./...
+	@echo 'Running tests...'
+	go test -race -vet=off ./...
+	@echo 'Tidying and verifying module dependencies...'
+	go mod tidy
+	go mod verify
+
+# ==================================================================================== #
+# BUILD
+# ==================================================================================== #
+
+## build/api: build the cmd/booky application
+.PHONY: build/booky
+build/booky:
+	@echo 'Building cmd/booky...'
+	go build -o=./bin/booky ./cmd/booky
+	GOOS=linux GOARCH=amd64 go build -o=./bin/linux_amd64/booky ./cmd/booky

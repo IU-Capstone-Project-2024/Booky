@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package booky;
+
+option go_package = "api/booky";
+
+service BookyService {
+    rpc HealthCheck (HealthCheckRequest) returns (HealthCheckResponse);
+}
+
+message HealthCheckRequest {}
+
+message HealthCheckResponse {
+    bool status = 1;
+}
