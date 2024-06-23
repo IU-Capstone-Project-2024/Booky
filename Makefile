@@ -20,6 +20,13 @@ help:
 run/booky:
 	go run ./cmd/booky
 
+.PHONY: generate
+generate:
+	@echo 'Generating proto files...'
+	protoc --go_out=. --go_opt=paths=source_relative \
+    	--go-grpc_out=. --go-grpc_opt=paths=source_relative \
+    	api/booky/booky.proto
+
 # ==================================================================================== #
 # QUALITY CONTROL
 # ==================================================================================== #

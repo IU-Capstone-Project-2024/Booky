@@ -4,12 +4,114 @@ package booky;
 
 option go_package = "api/booky";
 
+// Service definition
 service BookyService {
     rpc HealthCheck (HealthCheckRequest) returns (HealthCheckResponse);
+
+    // Course CRUD
+    rpc CreateCourse(CreateCourseRequest) returns (CreateCourseResponse);
+    rpc GetCourse(GetCourseRequest) returns (GetCourseResponse);
+    rpc UpdateCourse(UpdateCourseRequest) returns (UpdateCourseResponse);
+    rpc DeleteCourse(DeleteCourseRequest) returns (DeleteCourseResponse);
+    rpc ListCourses(ListCoursesRequest) returns (ListCoursesResponse);
+
+    // Note CRUD
+    rpc CreateNote(CreateNoteRequest) returns (CreateNoteResponse);
+    rpc GetNote(GetNoteRequest) returns (GetNoteResponse);
+    rpc UpdateNote(UpdateNoteRequest) returns (UpdateNoteResponse);
+    rpc DeleteNote(DeleteNoteRequest) returns (DeleteNoteResponse);
+    rpc ListNotes(ListNotesRequest) returns (ListNotesResponse);
 }
 
 message HealthCheckRequest {}
 
 message HealthCheckResponse {
     bool status = 1;
+}
+
+message Course {
+    string id = 1;
+    string title = 2;
+    string description = 3;
+}
+
+message Note {
+    string id = 1;
+    string course_id = 2;
+    string title = 3;
+    string body = 4;
+}
+
+message CreateCourseRequest {
+    Course course = 1;
+}
+
+message CreateCourseResponse {
+    Course course = 1;
+}
+
+message GetCourseRequest {
+    string id = 1;
+}
+
+message GetCourseResponse {
+    Course course = 1;
+}
+
+message UpdateCourseRequest {
+    Course course = 1;
+}
+
+message UpdateCourseResponse {
+    Course course = 1;
+}
+
+message DeleteCourseRequest {
+    string id = 1;
+}
+
+message DeleteCourseResponse {}
+
+message ListCoursesRequest {}
+
+message ListCoursesResponse {
+    repeated Course courses = 1;
+}
+
+message CreateNoteRequest {
+    Note note = 1;
+}
+
+message CreateNoteResponse {
+    Note note = 1;
+}
+
+message GetNoteRequest {
+    string id = 1;
+}
+
+message GetNoteResponse {
+    Note note = 1;
+}
+
+message UpdateNoteRequest {
+    Note note = 1;
+}
+
+message UpdateNoteResponse {
+    Note note = 1;
+}
+
+message DeleteNoteRequest {
+    string id = 1;
+}
+
+message DeleteNoteResponse {}
+
+message ListNotesRequest {
+    string course_id = 1;
+}
+
+message ListNotesResponse {
+    repeated Note notes = 1;
 }
