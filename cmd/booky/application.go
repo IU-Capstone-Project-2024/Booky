@@ -33,7 +33,12 @@ func (app *Application) Run() error {
 		logger.Fatal(err)
 	}
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(
+			unaryLoggingInterceptor(),
+			unaryRecoveryInterceptor(),
+		),
+	)
 
 	server := booky.NewServer()
 	pb.RegisterBookyServiceServer(grpcServer, server)

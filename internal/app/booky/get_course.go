@@ -3,7 +3,9 @@ package booky
 import (
 	pb "booky-back/api/booky"
 	"booky-back/internal/models"
+	"booky-back/internal/storage"
 	"context"
+	"errors"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -12,6 +14,9 @@ import (
 func (s *Server) GetCourse(ctx context.Context, req *pb.GetCourseRequest) (*pb.GetCourseResponse, error) {
 	course, err := s.Storage.GetCourse(req.GetId())
 	if err != nil {
+		if errors.Is(err, storage.ErrNotFound) {
+			return nil, status.Errorf(codes.NotFound, "GetCourse: course not found")
+		}
 		return nil, status.Errorf(codes.Internal, "GetCourse: failed to get course: %v", err)
 	}
 

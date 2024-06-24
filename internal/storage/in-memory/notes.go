@@ -2,6 +2,7 @@ package inmemory
 
 import (
 	"booky-back/internal/models"
+	"booky-back/internal/storage"
 	"fmt"
 )
 
@@ -14,13 +15,18 @@ func (s *InMemoryStorage) CreateNote(note *models.Note) (*models.Note, error) {
 func (s *InMemoryStorage) GetNote(id string) (*models.Note, error) {
 	note, ok := s.notes[id]
 	if !ok {
-		return nil, fmt.Errorf("note with id %s not found", id)
+		return nil, fmt.Errorf("note with id %s was not found: %w", id, storage.ErrNotFound)
 	}
 
 	return note, nil
 }
 
 func (s *InMemoryStorage) UpdateNote(note *models.Note) (*models.Note, error) {
+	_, ok := s.notes[note.ID]
+	if !ok {
+		return nil, fmt.Errorf("note with id %s was not found: %w", note.ID, storage.ErrNotFound)
+	}
+
 	s.notes[note.ID] = note
 	return note, nil
 }
@@ -28,7 +34,7 @@ func (s *InMemoryStorage) UpdateNote(note *models.Note) (*models.Note, error) {
 func (s *InMemoryStorage) DeleteNote(id string) error {
 	_, ok := s.notes[id]
 	if !ok {
-		return fmt.Errorf("note with id %s not found", id)
+		return fmt.Errorf("note with id %s was not found: %w", id, storage.ErrNotFound)
 	}
 
 	delete(s.notes, id)

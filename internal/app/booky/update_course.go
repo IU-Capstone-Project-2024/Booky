@@ -3,7 +3,9 @@ package booky
 import (
 	pb "booky-back/api/booky"
 	"booky-back/internal/models"
+	"booky-back/internal/storage"
 	"context"
+	"errors"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -17,6 +19,9 @@ func (s *Server) UpdateCourse(ctx context.Context, req *pb.UpdateCourseRequest) 
 
 	updatedCourse, err := s.Storage.UpdateCourse(course)
 	if err != nil {
+		if errors.Is(err, storage.ErrNotFound) {
+			return nil, status.Errorf(codes.NotFound, "UpdateCourse: course not found")
+		}
 		return nil, status.Errorf(codes.Internal, "UpdateCourse: could not update course: %v", err)
 	}
 
