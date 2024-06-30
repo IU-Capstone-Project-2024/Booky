@@ -12,7 +12,7 @@ import (
 )
 
 func (s *Server) UpdateCourse(ctx context.Context, req *pb.UpdateCourseRequest) (*pb.UpdateCourseResponse, error) {
-	course, err := models.BindCourse(req.GetCourse())
+	course, err := models.BindCourse(req.GetData())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "UpdateCourse: could not bind course: %v", err)
 	}

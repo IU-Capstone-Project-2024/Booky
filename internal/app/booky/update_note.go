@@ -12,13 +12,20 @@ import (
 )
 
 func (s *Server) UpdateNote(ctx context.Context, req *pb.UpdateNoteRequest) (*pb.UpdateNoteResponse, error) {
-	note, err := models.BindNote(req.GetNote())
+	note, err := models.BindNote(req.GetData())
 	if err != nil {
 		if errors.Is(err, storage.ErrNotFound) {
 			return nil, status.Errorf(codes.NotFound, "UpdateNote: note not found")
 		}
 		return nil, status.Errorf(codes.InvalidArgument, "UpdateNote: could not bind note: %v", err)
 	}
+
+	user, err := s.Storage.GetUser(note.Publisher.ID)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "CreateNote: could not get user: %v", err)
+	}
+
+	note.Publisher = *user
 
 	updatedNote, err := s.Storage.UpdateNote(note)
 	if err != nil {

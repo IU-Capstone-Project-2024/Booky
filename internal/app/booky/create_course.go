@@ -10,7 +10,7 @@ import (
 )
 
 func (s *Server) CreateCourse(ctx context.Context, req *pb.CreateCourseRequest) (*pb.CreateCourseResponse, error) {
-	courseData, err := models.BindCourse(req.GetCourse())
+	courseData, err := models.BindCourse(req.GetData())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "CreateCourse: could not bind course data: %v", err)
 	}

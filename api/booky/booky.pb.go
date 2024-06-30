@@ -9,6 +9,7 @@ package booky
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 )
@@ -19,6 +20,122 @@ const (
 	// Verify that runtime/protoimpl is sufficiently up-to-date.
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
+
+type Track int32
+
+const (
+	Track_TRACK_UNKNOWN                         Track = 0
+	Track_TRACK_CORE                            Track = 1
+	Track_TRACK_SOFTWARE_DEVELOPMENT            Track = 2
+	Track_TRACK_CYBER_SECURITY                  Track = 3
+	Track_TRACK_GAME_DEVELOPMENT                Track = 4
+	Track_TRACK_APPLIED_ARTIFICIAL_INTELLIGENCE Track = 5
+	Track_TRACK_ROBOTICS                        Track = 6
+	Track_TRACK_DATA_SCIENCE                    Track = 7
+)
+
+// Enum value maps for Track.
+var (
+	Track_name = map[int32]string{
+		0: "TRACK_UNKNOWN",
+		1: "TRACK_CORE",
+		2: "TRACK_SOFTWARE_DEVELOPMENT",
+		3: "TRACK_CYBER_SECURITY",
+		4: "TRACK_GAME_DEVELOPMENT",
+		5: "TRACK_APPLIED_ARTIFICIAL_INTELLIGENCE",
+		6: "TRACK_ROBOTICS",
+		7: "TRACK_DATA_SCIENCE",
+	}
+	Track_value = map[string]int32{
+		"TRACK_UNKNOWN":                         0,
+		"TRACK_CORE":                            1,
+		"TRACK_SOFTWARE_DEVELOPMENT":            2,
+		"TRACK_CYBER_SECURITY":                  3,
+		"TRACK_GAME_DEVELOPMENT":                4,
+		"TRACK_APPLIED_ARTIFICIAL_INTELLIGENCE": 5,
+		"TRACK_ROBOTICS":                        6,
+		"TRACK_DATA_SCIENCE":                    7,
+	}
+)
+
+func (x Track) Enum() *Track {
+	p := new(Track)
+	*p = x
+	return p
+}
+
+func (x Track) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Track) Descriptor() protoreflect.EnumDescriptor {
+	return file_api_booky_booky_proto_enumTypes[0].Descriptor()
+}
+
+func (Track) Type() protoreflect.EnumType {
+	return &file_api_booky_booky_proto_enumTypes[0]
+}
+
+func (x Track) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Track.Descriptor instead.
+func (Track) EnumDescriptor() ([]byte, []int) {
+	return file_api_booky_booky_proto_rawDescGZIP(), []int{0}
+}
+
+type Semester int32
+
+const (
+	Semester_SEMESTER_UNKNOWN Semester = 0
+	Semester_SEMESTER_FALL    Semester = 1
+	Semester_SEMESTER_SPRING  Semester = 2
+	Semester_SEMESTER_SUMMER  Semester = 3
+)
+
+// Enum value maps for Semester.
+var (
+	Semester_name = map[int32]string{
+		0: "SEMESTER_UNKNOWN",
+		1: "SEMESTER_FALL",
+		2: "SEMESTER_SPRING",
+		3: "SEMESTER_SUMMER",
+	}
+	Semester_value = map[string]int32{
+		"SEMESTER_UNKNOWN": 0,
+		"SEMESTER_FALL":    1,
+		"SEMESTER_SPRING":  2,
+		"SEMESTER_SUMMER":  3,
+	}
+)
+
+func (x Semester) Enum() *Semester {
+	p := new(Semester)
+	*p = x
+	return p
+}
+
+func (x Semester) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Semester) Descriptor() protoreflect.EnumDescriptor {
+	return file_api_booky_booky_proto_enumTypes[1].Descriptor()
+}
+
+func (Semester) Type() protoreflect.EnumType {
+	return &file_api_booky_booky_proto_enumTypes[1]
+}
+
+func (x Semester) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Semester.Descriptor instead.
+func (Semester) EnumDescriptor() ([]byte, []int) {
+	return file_api_booky_booky_proto_rawDescGZIP(), []int{1}
+}
 
 type HealthCheckRequest struct {
 	state         protoimpl.MessageState
@@ -110,9 +227,12 @@ type Course struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id          string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	Title       string `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
-	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Id          string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Title       string   `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Description *string  `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	Tracks      []Track  `protobuf:"varint,4,rep,packed,name=tracks,proto3,enum=booky.Track" json:"tracks,omitempty"`
+	Semester    Semester `protobuf:"varint,5,opt,name=semester,proto3,enum=booky.Semester" json:"semester,omitempty"`
+	Year        int32    `protobuf:"varint,6,opt,name=year,proto3" json:"year,omitempty"`
 }
 
 func (x *Course) Reset() {
@@ -162,10 +282,31 @@ func (x *Course) GetTitle() string {
 }
 
 func (x *Course) GetDescription() string {
-	if x != nil {
-		return x.Description
+	if x != nil && x.Description != nil {
+		return *x.Description
 	}
 	return ""
+}
+
+func (x *Course) GetTracks() []Track {
+	if x != nil {
+		return x.Tracks
+	}
+	return nil
+}
+
+func (x *Course) GetSemester() Semester {
+	if x != nil {
+		return x.Semester
+	}
+	return Semester_SEMESTER_UNKNOWN
+}
+
+func (x *Course) GetYear() int32 {
+	if x != nil {
+		return x.Year
+	}
+	return 0
 }
 
 type Note struct {
@@ -173,10 +314,13 @@ type Note struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id       string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
-	CourseId string `protobuf:"bytes,2,opt,name=course_id,json=courseId,proto3" json:"course_id,omitempty"`
-	Title    string `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
-	Body     string `protobuf:"bytes,4,opt,name=body,proto3" json:"body,omitempty"`
+	Id        string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	CourseId  string                 `protobuf:"bytes,2,opt,name=course_id,json=courseId,proto3" json:"course_id,omitempty"`
+	Title     string                 `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
+	Body      string                 `protobuf:"bytes,4,opt,name=body,proto3" json:"body,omitempty"`
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	Publisher *User                  `protobuf:"bytes,7,opt,name=publisher,proto3" json:"publisher,omitempty"`
 }
 
 func (x *Note) Reset() {
@@ -239,18 +383,252 @@ func (x *Note) GetBody() string {
 	return ""
 }
 
+func (x *Note) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *Note) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+func (x *Note) GetPublisher() *User {
+	if x != nil {
+		return x.Publisher
+	}
+	return nil
+}
+
+type User struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id        string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name      string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Email     string                 `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
+	Password  *Password              `protobuf:"bytes,4,opt,name=password,proto3" json:"password,omitempty"`
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+}
+
+func (x *User) Reset() {
+	*x = User{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_booky_booky_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *User) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*User) ProtoMessage() {}
+
+func (x *User) ProtoReflect() protoreflect.Message {
+	mi := &file_api_booky_booky_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use User.ProtoReflect.Descriptor instead.
+func (*User) Descriptor() ([]byte, []int) {
+	return file_api_booky_booky_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *User) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *User) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *User) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *User) GetPassword() *Password {
+	if x != nil {
+		return x.Password
+	}
+	return nil
+}
+
+func (x *User) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+type Password struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Password     string `protobuf:"bytes,1,opt,name=password,proto3" json:"password,omitempty"`
+	PasswordHash string `protobuf:"bytes,2,opt,name=password_hash,json=passwordHash,proto3" json:"password_hash,omitempty"`
+}
+
+func (x *Password) Reset() {
+	*x = Password{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_booky_booky_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Password) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Password) ProtoMessage() {}
+
+func (x *Password) ProtoReflect() protoreflect.Message {
+	mi := &file_api_booky_booky_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Password.ProtoReflect.Descriptor instead.
+func (*Password) Descriptor() ([]byte, []int) {
+	return file_api_booky_booky_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *Password) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
+func (x *Password) GetPasswordHash() string {
+	if x != nil {
+		return x.PasswordHash
+	}
+	return ""
+}
+
+type CreateCourseData struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Title       string   `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
+	Description *string  `protobuf:"bytes,2,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	Tracks      []Track  `protobuf:"varint,3,rep,packed,name=tracks,proto3,enum=booky.Track" json:"tracks,omitempty"`
+	Semester    Semester `protobuf:"varint,4,opt,name=semester,proto3,enum=booky.Semester" json:"semester,omitempty"`
+	Year        int32    `protobuf:"varint,5,opt,name=year,proto3" json:"year,omitempty"`
+}
+
+func (x *CreateCourseData) Reset() {
+	*x = CreateCourseData{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_booky_booky_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CreateCourseData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateCourseData) ProtoMessage() {}
+
+func (x *CreateCourseData) ProtoReflect() protoreflect.Message {
+	mi := &file_api_booky_booky_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateCourseData.ProtoReflect.Descriptor instead.
+func (*CreateCourseData) Descriptor() ([]byte, []int) {
+	return file_api_booky_booky_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *CreateCourseData) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *CreateCourseData) GetDescription() string {
+	if x != nil && x.Description != nil {
+		return *x.Description
+	}
+	return ""
+}
+
+func (x *CreateCourseData) GetTracks() []Track {
+	if x != nil {
+		return x.Tracks
+	}
+	return nil
+}
+
+func (x *CreateCourseData) GetSemester() Semester {
+	if x != nil {
+		return x.Semester
+	}
+	return Semester_SEMESTER_UNKNOWN
+}
+
+func (x *CreateCourseData) GetYear() int32 {
+	if x != nil {
+		return x.Year
+	}
+	return 0
+}
+
 type CreateCourseRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Course *Course `protobuf:"bytes,1,opt,name=course,proto3" json:"course,omitempty"`
+	Data *CreateCourseData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 }
 
 func (x *CreateCourseRequest) Reset() {
 	*x = CreateCourseRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_booky_booky_proto_msgTypes[4]
+		mi := &file_api_booky_booky_proto_msgTypes[7]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -263,7 +641,7 @@ func (x *CreateCourseRequest) String() string {
 func (*CreateCourseRequest) ProtoMessage() {}
 
 func (x *CreateCourseRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_booky_booky_proto_msgTypes[4]
+	mi := &file_api_booky_booky_proto_msgTypes[7]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -276,12 +654,12 @@ func (x *CreateCourseRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateCourseRequest.ProtoReflect.Descriptor instead.
 func (*CreateCourseRequest) Descriptor() ([]byte, []int) {
-	return file_api_booky_booky_proto_rawDescGZIP(), []int{4}
+	return file_api_booky_booky_proto_rawDescGZIP(), []int{7}
 }
 
-func (x *CreateCourseRequest) GetCourse() *Course {
+func (x *CreateCourseRequest) GetData() *CreateCourseData {
 	if x != nil {
-		return x.Course
+		return x.Data
 	}
 	return nil
 }
@@ -297,7 +675,7 @@ type CreateCourseResponse struct {
 func (x *CreateCourseResponse) Reset() {
 	*x = CreateCourseResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_booky_booky_proto_msgTypes[5]
+		mi := &file_api_booky_booky_proto_msgTypes[8]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -310,7 +688,7 @@ func (x *CreateCourseResponse) String() string {
 func (*CreateCourseResponse) ProtoMessage() {}
 
 func (x *CreateCourseResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_booky_booky_proto_msgTypes[5]
+	mi := &file_api_booky_booky_proto_msgTypes[8]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -323,7 +701,7 @@ func (x *CreateCourseResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateCourseResponse.ProtoReflect.Descriptor instead.
 func (*CreateCourseResponse) Descriptor() ([]byte, []int) {
-	return file_api_booky_booky_proto_rawDescGZIP(), []int{5}
+	return file_api_booky_booky_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *CreateCourseResponse) GetCourse() *Course {
@@ -344,7 +722,7 @@ type GetCourseRequest struct {
 func (x *GetCourseRequest) Reset() {
 	*x = GetCourseRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_booky_booky_proto_msgTypes[6]
+		mi := &file_api_booky_booky_proto_msgTypes[9]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -357,7 +735,7 @@ func (x *GetCourseRequest) String() string {
 func (*GetCourseRequest) ProtoMessage() {}
 
 func (x *GetCourseRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_booky_booky_proto_msgTypes[6]
+	mi := &file_api_booky_booky_proto_msgTypes[9]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -370,7 +748,7 @@ func (x *GetCourseRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCourseRequest.ProtoReflect.Descriptor instead.
 func (*GetCourseRequest) Descriptor() ([]byte, []int) {
-	return file_api_booky_booky_proto_rawDescGZIP(), []int{6}
+	return file_api_booky_booky_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *GetCourseRequest) GetId() string {
@@ -391,7 +769,7 @@ type GetCourseResponse struct {
 func (x *GetCourseResponse) Reset() {
 	*x = GetCourseResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_booky_booky_proto_msgTypes[7]
+		mi := &file_api_booky_booky_proto_msgTypes[10]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -404,7 +782,7 @@ func (x *GetCourseResponse) String() string {
 func (*GetCourseResponse) ProtoMessage() {}
 
 func (x *GetCourseResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_booky_booky_proto_msgTypes[7]
+	mi := &file_api_booky_booky_proto_msgTypes[10]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -417,7 +795,7 @@ func (x *GetCourseResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetCourseResponse.ProtoReflect.Descriptor instead.
 func (*GetCourseResponse) Descriptor() ([]byte, []int) {
-	return file_api_booky_booky_proto_rawDescGZIP(), []int{7}
+	return file_api_booky_booky_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *GetCourseResponse) GetCourse() *Course {
@@ -432,13 +810,13 @@ type UpdateCourseRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Course *Course `protobuf:"bytes,1,opt,name=course,proto3" json:"course,omitempty"`
+	Data *CreateCourseData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 }
 
 func (x *UpdateCourseRequest) Reset() {
 	*x = UpdateCourseRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_booky_booky_proto_msgTypes[8]
+		mi := &file_api_booky_booky_proto_msgTypes[11]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -451,7 +829,7 @@ func (x *UpdateCourseRequest) String() string {
 func (*UpdateCourseRequest) ProtoMessage() {}
 
 func (x *UpdateCourseRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_booky_booky_proto_msgTypes[8]
+	mi := &file_api_booky_booky_proto_msgTypes[11]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -464,12 +842,12 @@ func (x *UpdateCourseRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateCourseRequest.ProtoReflect.Descriptor instead.
 func (*UpdateCourseRequest) Descriptor() ([]byte, []int) {
-	return file_api_booky_booky_proto_rawDescGZIP(), []int{8}
+	return file_api_booky_booky_proto_rawDescGZIP(), []int{11}
 }
 
-func (x *UpdateCourseRequest) GetCourse() *Course {
+func (x *UpdateCourseRequest) GetData() *CreateCourseData {
 	if x != nil {
-		return x.Course
+		return x.Data
 	}
 	return nil
 }
@@ -485,7 +863,7 @@ type UpdateCourseResponse struct {
 func (x *UpdateCourseResponse) Reset() {
 	*x = UpdateCourseResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_booky_booky_proto_msgTypes[9]
+		mi := &file_api_booky_booky_proto_msgTypes[12]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -498,7 +876,7 @@ func (x *UpdateCourseResponse) String() string {
 func (*UpdateCourseResponse) ProtoMessage() {}
 
 func (x *UpdateCourseResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_booky_booky_proto_msgTypes[9]
+	mi := &file_api_booky_booky_proto_msgTypes[12]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -511,7 +889,7 @@ func (x *UpdateCourseResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateCourseResponse.ProtoReflect.Descriptor instead.
 func (*UpdateCourseResponse) Descriptor() ([]byte, []int) {
-	return file_api_booky_booky_proto_rawDescGZIP(), []int{9}
+	return file_api_booky_booky_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *UpdateCourseResponse) GetCourse() *Course {
@@ -532,7 +910,7 @@ type DeleteCourseRequest struct {
 func (x *DeleteCourseRequest) Reset() {
 	*x = DeleteCourseRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_booky_booky_proto_msgTypes[10]
+		mi := &file_api_booky_booky_proto_msgTypes[13]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -545,7 +923,7 @@ func (x *DeleteCourseRequest) String() string {
 func (*DeleteCourseRequest) ProtoMessage() {}
 
 func (x *DeleteCourseRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_booky_booky_proto_msgTypes[10]
+	mi := &file_api_booky_booky_proto_msgTypes[13]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -558,7 +936,7 @@ func (x *DeleteCourseRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteCourseRequest.ProtoReflect.Descriptor instead.
 func (*DeleteCourseRequest) Descriptor() ([]byte, []int) {
-	return file_api_booky_booky_proto_rawDescGZIP(), []int{10}
+	return file_api_booky_booky_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *DeleteCourseRequest) GetId() string {
@@ -577,7 +955,7 @@ type DeleteCourseResponse struct {
 func (x *DeleteCourseResponse) Reset() {
 	*x = DeleteCourseResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_booky_booky_proto_msgTypes[11]
+		mi := &file_api_booky_booky_proto_msgTypes[14]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -590,7 +968,7 @@ func (x *DeleteCourseResponse) String() string {
 func (*DeleteCourseResponse) ProtoMessage() {}
 
 func (x *DeleteCourseResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_booky_booky_proto_msgTypes[11]
+	mi := &file_api_booky_booky_proto_msgTypes[14]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -603,7 +981,7 @@ func (x *DeleteCourseResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteCourseResponse.ProtoReflect.Descriptor instead.
 func (*DeleteCourseResponse) Descriptor() ([]byte, []int) {
-	return file_api_booky_booky_proto_rawDescGZIP(), []int{11}
+	return file_api_booky_booky_proto_rawDescGZIP(), []int{14}
 }
 
 type ListCoursesRequest struct {
@@ -615,7 +993,7 @@ type ListCoursesRequest struct {
 func (x *ListCoursesRequest) Reset() {
 	*x = ListCoursesRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_booky_booky_proto_msgTypes[12]
+		mi := &file_api_booky_booky_proto_msgTypes[15]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -628,7 +1006,7 @@ func (x *ListCoursesRequest) String() string {
 func (*ListCoursesRequest) ProtoMessage() {}
 
 func (x *ListCoursesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_booky_booky_proto_msgTypes[12]
+	mi := &file_api_booky_booky_proto_msgTypes[15]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -641,7 +1019,7 @@ func (x *ListCoursesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCoursesRequest.ProtoReflect.Descriptor instead.
 func (*ListCoursesRequest) Descriptor() ([]byte, []int) {
-	return file_api_booky_booky_proto_rawDescGZIP(), []int{12}
+	return file_api_booky_booky_proto_rawDescGZIP(), []int{15}
 }
 
 type ListCoursesResponse struct {
@@ -655,7 +1033,7 @@ type ListCoursesResponse struct {
 func (x *ListCoursesResponse) Reset() {
 	*x = ListCoursesResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_booky_booky_proto_msgTypes[13]
+		mi := &file_api_booky_booky_proto_msgTypes[16]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -668,7 +1046,7 @@ func (x *ListCoursesResponse) String() string {
 func (*ListCoursesResponse) ProtoMessage() {}
 
 func (x *ListCoursesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_booky_booky_proto_msgTypes[13]
+	mi := &file_api_booky_booky_proto_msgTypes[16]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -681,7 +1059,7 @@ func (x *ListCoursesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListCoursesResponse.ProtoReflect.Descriptor instead.
 func (*ListCoursesResponse) Descriptor() ([]byte, []int) {
-	return file_api_booky_booky_proto_rawDescGZIP(), []int{13}
+	return file_api_booky_booky_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *ListCoursesResponse) GetCourses() []*Course {
@@ -691,18 +1069,89 @@ func (x *ListCoursesResponse) GetCourses() []*Course {
 	return nil
 }
 
+type CreateNoteData struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	CourseId string `protobuf:"bytes,1,opt,name=course_id,json=courseId,proto3" json:"course_id,omitempty"`
+	Title    string `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Body     string `protobuf:"bytes,3,opt,name=body,proto3" json:"body,omitempty"`
+	UserId   string `protobuf:"bytes,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+}
+
+func (x *CreateNoteData) Reset() {
+	*x = CreateNoteData{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_api_booky_booky_proto_msgTypes[17]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CreateNoteData) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CreateNoteData) ProtoMessage() {}
+
+func (x *CreateNoteData) ProtoReflect() protoreflect.Message {
+	mi := &file_api_booky_booky_proto_msgTypes[17]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CreateNoteData.ProtoReflect.Descriptor instead.
+func (*CreateNoteData) Descriptor() ([]byte, []int) {
+	return file_api_booky_booky_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *CreateNoteData) GetCourseId() string {
+	if x != nil {
+		return x.CourseId
+	}
+	return ""
+}
+
+func (x *CreateNoteData) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *CreateNoteData) GetBody() string {
+	if x != nil {
+		return x.Body
+	}
+	return ""
+}
+
+func (x *CreateNoteData) GetUserId() string {
+	if x != nil {
+		return x.UserId
+	}
+	return ""
+}
+
 type CreateNoteRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Note *Note `protobuf:"bytes,1,opt,name=note,proto3" json:"note,omitempty"`
+	Data *CreateNoteData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 }
 
 func (x *CreateNoteRequest) Reset() {
 	*x = CreateNoteRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_booky_booky_proto_msgTypes[14]
+		mi := &file_api_booky_booky_proto_msgTypes[18]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -715,7 +1164,7 @@ func (x *CreateNoteRequest) String() string {
 func (*CreateNoteRequest) ProtoMessage() {}
 
 func (x *CreateNoteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_booky_booky_proto_msgTypes[14]
+	mi := &file_api_booky_booky_proto_msgTypes[18]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -728,12 +1177,12 @@ func (x *CreateNoteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateNoteRequest.ProtoReflect.Descriptor instead.
 func (*CreateNoteRequest) Descriptor() ([]byte, []int) {
-	return file_api_booky_booky_proto_rawDescGZIP(), []int{14}
+	return file_api_booky_booky_proto_rawDescGZIP(), []int{18}
 }
 
-func (x *CreateNoteRequest) GetNote() *Note {
+func (x *CreateNoteRequest) GetData() *CreateNoteData {
 	if x != nil {
-		return x.Note
+		return x.Data
 	}
 	return nil
 }
@@ -749,7 +1198,7 @@ type CreateNoteResponse struct {
 func (x *CreateNoteResponse) Reset() {
 	*x = CreateNoteResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_booky_booky_proto_msgTypes[15]
+		mi := &file_api_booky_booky_proto_msgTypes[19]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -762,7 +1211,7 @@ func (x *CreateNoteResponse) String() string {
 func (*CreateNoteResponse) ProtoMessage() {}
 
 func (x *CreateNoteResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_booky_booky_proto_msgTypes[15]
+	mi := &file_api_booky_booky_proto_msgTypes[19]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -775,7 +1224,7 @@ func (x *CreateNoteResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateNoteResponse.ProtoReflect.Descriptor instead.
 func (*CreateNoteResponse) Descriptor() ([]byte, []int) {
-	return file_api_booky_booky_proto_rawDescGZIP(), []int{15}
+	return file_api_booky_booky_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *CreateNoteResponse) GetNote() *Note {
@@ -796,7 +1245,7 @@ type GetNoteRequest struct {
 func (x *GetNoteRequest) Reset() {
 	*x = GetNoteRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_booky_booky_proto_msgTypes[16]
+		mi := &file_api_booky_booky_proto_msgTypes[20]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -809,7 +1258,7 @@ func (x *GetNoteRequest) String() string {
 func (*GetNoteRequest) ProtoMessage() {}
 
 func (x *GetNoteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_booky_booky_proto_msgTypes[16]
+	mi := &file_api_booky_booky_proto_msgTypes[20]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -822,7 +1271,7 @@ func (x *GetNoteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetNoteRequest.ProtoReflect.Descriptor instead.
 func (*GetNoteRequest) Descriptor() ([]byte, []int) {
-	return file_api_booky_booky_proto_rawDescGZIP(), []int{16}
+	return file_api_booky_booky_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *GetNoteRequest) GetId() string {
@@ -843,7 +1292,7 @@ type GetNoteResponse struct {
 func (x *GetNoteResponse) Reset() {
 	*x = GetNoteResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_booky_booky_proto_msgTypes[17]
+		mi := &file_api_booky_booky_proto_msgTypes[21]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -856,7 +1305,7 @@ func (x *GetNoteResponse) String() string {
 func (*GetNoteResponse) ProtoMessage() {}
 
 func (x *GetNoteResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_booky_booky_proto_msgTypes[17]
+	mi := &file_api_booky_booky_proto_msgTypes[21]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -869,7 +1318,7 @@ func (x *GetNoteResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetNoteResponse.ProtoReflect.Descriptor instead.
 func (*GetNoteResponse) Descriptor() ([]byte, []int) {
-	return file_api_booky_booky_proto_rawDescGZIP(), []int{17}
+	return file_api_booky_booky_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *GetNoteResponse) GetNote() *Note {
@@ -884,13 +1333,13 @@ type UpdateNoteRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Note *Note `protobuf:"bytes,1,opt,name=note,proto3" json:"note,omitempty"`
+	Data *CreateNoteData `protobuf:"bytes,1,opt,name=data,proto3" json:"data,omitempty"`
 }
 
 func (x *UpdateNoteRequest) Reset() {
 	*x = UpdateNoteRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_booky_booky_proto_msgTypes[18]
+		mi := &file_api_booky_booky_proto_msgTypes[22]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -903,7 +1352,7 @@ func (x *UpdateNoteRequest) String() string {
 func (*UpdateNoteRequest) ProtoMessage() {}
 
 func (x *UpdateNoteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_booky_booky_proto_msgTypes[18]
+	mi := &file_api_booky_booky_proto_msgTypes[22]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -916,12 +1365,12 @@ func (x *UpdateNoteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateNoteRequest.ProtoReflect.Descriptor instead.
 func (*UpdateNoteRequest) Descriptor() ([]byte, []int) {
-	return file_api_booky_booky_proto_rawDescGZIP(), []int{18}
+	return file_api_booky_booky_proto_rawDescGZIP(), []int{22}
 }
 
-func (x *UpdateNoteRequest) GetNote() *Note {
+func (x *UpdateNoteRequest) GetData() *CreateNoteData {
 	if x != nil {
-		return x.Note
+		return x.Data
 	}
 	return nil
 }
@@ -937,7 +1386,7 @@ type UpdateNoteResponse struct {
 func (x *UpdateNoteResponse) Reset() {
 	*x = UpdateNoteResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_booky_booky_proto_msgTypes[19]
+		mi := &file_api_booky_booky_proto_msgTypes[23]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -950,7 +1399,7 @@ func (x *UpdateNoteResponse) String() string {
 func (*UpdateNoteResponse) ProtoMessage() {}
 
 func (x *UpdateNoteResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_booky_booky_proto_msgTypes[19]
+	mi := &file_api_booky_booky_proto_msgTypes[23]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -963,7 +1412,7 @@ func (x *UpdateNoteResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateNoteResponse.ProtoReflect.Descriptor instead.
 func (*UpdateNoteResponse) Descriptor() ([]byte, []int) {
-	return file_api_booky_booky_proto_rawDescGZIP(), []int{19}
+	return file_api_booky_booky_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *UpdateNoteResponse) GetNote() *Note {
@@ -984,7 +1433,7 @@ type DeleteNoteRequest struct {
 func (x *DeleteNoteRequest) Reset() {
 	*x = DeleteNoteRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_booky_booky_proto_msgTypes[20]
+		mi := &file_api_booky_booky_proto_msgTypes[24]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -997,7 +1446,7 @@ func (x *DeleteNoteRequest) String() string {
 func (*DeleteNoteRequest) ProtoMessage() {}
 
 func (x *DeleteNoteRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_booky_booky_proto_msgTypes[20]
+	mi := &file_api_booky_booky_proto_msgTypes[24]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1010,7 +1459,7 @@ func (x *DeleteNoteRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteNoteRequest.ProtoReflect.Descriptor instead.
 func (*DeleteNoteRequest) Descriptor() ([]byte, []int) {
-	return file_api_booky_booky_proto_rawDescGZIP(), []int{20}
+	return file_api_booky_booky_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *DeleteNoteRequest) GetId() string {
@@ -1029,7 +1478,7 @@ type DeleteNoteResponse struct {
 func (x *DeleteNoteResponse) Reset() {
 	*x = DeleteNoteResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_booky_booky_proto_msgTypes[21]
+		mi := &file_api_booky_booky_proto_msgTypes[25]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1042,7 +1491,7 @@ func (x *DeleteNoteResponse) String() string {
 func (*DeleteNoteResponse) ProtoMessage() {}
 
 func (x *DeleteNoteResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_booky_booky_proto_msgTypes[21]
+	mi := &file_api_booky_booky_proto_msgTypes[25]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1055,7 +1504,7 @@ func (x *DeleteNoteResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteNoteResponse.ProtoReflect.Descriptor instead.
 func (*DeleteNoteResponse) Descriptor() ([]byte, []int) {
-	return file_api_booky_booky_proto_rawDescGZIP(), []int{21}
+	return file_api_booky_booky_proto_rawDescGZIP(), []int{25}
 }
 
 type ListNotesRequest struct {
@@ -1069,7 +1518,7 @@ type ListNotesRequest struct {
 func (x *ListNotesRequest) Reset() {
 	*x = ListNotesRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_booky_booky_proto_msgTypes[22]
+		mi := &file_api_booky_booky_proto_msgTypes[26]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1082,7 +1531,7 @@ func (x *ListNotesRequest) String() string {
 func (*ListNotesRequest) ProtoMessage() {}
 
 func (x *ListNotesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_booky_booky_proto_msgTypes[22]
+	mi := &file_api_booky_booky_proto_msgTypes[26]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1095,7 +1544,7 @@ func (x *ListNotesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListNotesRequest.ProtoReflect.Descriptor instead.
 func (*ListNotesRequest) Descriptor() ([]byte, []int) {
-	return file_api_booky_booky_proto_rawDescGZIP(), []int{22}
+	return file_api_booky_booky_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *ListNotesRequest) GetCourseId() string {
@@ -1116,7 +1565,7 @@ type ListNotesResponse struct {
 func (x *ListNotesResponse) Reset() {
 	*x = ListNotesResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_api_booky_booky_proto_msgTypes[23]
+		mi := &file_api_booky_booky_proto_msgTypes[27]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1129,7 +1578,7 @@ func (x *ListNotesResponse) String() string {
 func (*ListNotesResponse) ProtoMessage() {}
 
 func (x *ListNotesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_booky_booky_proto_msgTypes[23]
+	mi := &file_api_booky_booky_proto_msgTypes[27]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1142,7 +1591,7 @@ func (x *ListNotesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListNotesResponse.ProtoReflect.Descriptor instead.
 func (*ListNotesResponse) Descriptor() ([]byte, []int) {
-	return file_api_booky_booky_proto_rawDescGZIP(), []int{23}
+	return file_api_booky_booky_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *ListNotesResponse) GetNotes() []*Note {
@@ -1156,83 +1605,161 @@ var File_api_booky_booky_proto protoreflect.FileDescriptor
 
 var file_api_booky_booky_proto_rawDesc = []byte{
 	0x0a, 0x15, 0x61, 0x70, 0x69, 0x2f, 0x62, 0x6f, 0x6f, 0x6b, 0x79, 0x2f, 0x62, 0x6f, 0x6f, 0x6b,
-	0x79, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x05, 0x62, 0x6f, 0x6f, 0x6b, 0x79, 0x22, 0x14,
-	0x0a, 0x12, 0x48, 0x65, 0x61, 0x6c, 0x74, 0x68, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x52, 0x65, 0x71,
-	0x75, 0x65, 0x73, 0x74, 0x22, 0x2d, 0x0a, 0x13, 0x48, 0x65, 0x61, 0x6c, 0x74, 0x68, 0x43, 0x68,
-	0x65, 0x63, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x16, 0x0a, 0x06, 0x73,
-	0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x06, 0x73, 0x74, 0x61,
-	0x74, 0x75, 0x73, 0x22, 0x50, 0x0a, 0x06, 0x43, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x12, 0x0e, 0x0a,
-	0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x14, 0x0a,
-	0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x69,
-	0x74, 0x6c, 0x65, 0x12, 0x20, 0x0a, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69,
-	0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69,
-	0x70, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x5d, 0x0a, 0x04, 0x4e, 0x6f, 0x74, 0x65, 0x12, 0x0e, 0x0a,
-	0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x1b, 0x0a,
-	0x09, 0x63, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09,
-	0x52, 0x08, 0x63, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x49, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x69,
-	0x74, 0x6c, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65,
-	0x12, 0x12, 0x0a, 0x04, 0x62, 0x6f, 0x64, 0x79, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04,
-	0x62, 0x6f, 0x64, 0x79, 0x22, 0x3c, 0x0a, 0x13, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x6f,
-	0x75, 0x72, 0x73, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x25, 0x0a, 0x06, 0x63,
-	0x6f, 0x75, 0x72, 0x73, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x62, 0x6f,
-	0x6f, 0x6b, 0x79, 0x2e, 0x43, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x52, 0x06, 0x63, 0x6f, 0x75, 0x72,
-	0x73, 0x65, 0x22, 0x3d, 0x0a, 0x14, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x75, 0x72,
-	0x73, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x25, 0x0a, 0x06, 0x63, 0x6f,
-	0x75, 0x72, 0x73, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x62, 0x6f, 0x6f,
-	0x6b, 0x79, 0x2e, 0x43, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x52, 0x06, 0x63, 0x6f, 0x75, 0x72, 0x73,
-	0x65, 0x22, 0x22, 0x0a, 0x10, 0x47, 0x65, 0x74, 0x43, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0x3a, 0x0a, 0x11, 0x47, 0x65, 0x74, 0x43, 0x6f, 0x75, 0x72,
-	0x73, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x25, 0x0a, 0x06, 0x63, 0x6f,
-	0x75, 0x72, 0x73, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x62, 0x6f, 0x6f,
-	0x6b, 0x79, 0x2e, 0x43, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x52, 0x06, 0x63, 0x6f, 0x75, 0x72, 0x73,
-	0x65, 0x22, 0x3c, 0x0a, 0x13, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x75, 0x72, 0x73,
-	0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x25, 0x0a, 0x06, 0x63, 0x6f, 0x75, 0x72,
+	0x79, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x05, 0x62, 0x6f, 0x6f, 0x6b, 0x79, 0x1a, 0x1f,
+	0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f,
+	0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22,
+	0x14, 0x0a, 0x12, 0x48, 0x65, 0x61, 0x6c, 0x74, 0x68, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x52, 0x65,
+	0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x2d, 0x0a, 0x13, 0x48, 0x65, 0x61, 0x6c, 0x74, 0x68, 0x43,
+	0x68, 0x65, 0x63, 0x6b, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x16, 0x0a, 0x06,
+	0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x06, 0x73, 0x74,
+	0x61, 0x74, 0x75, 0x73, 0x22, 0xcc, 0x01, 0x0a, 0x06, 0x43, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x12,
+	0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12,
+	0x14, 0x0a, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05,
+	0x74, 0x69, 0x74, 0x6c, 0x65, 0x12, 0x25, 0x0a, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70,
+	0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x48, 0x00, 0x52, 0x0b, 0x64, 0x65,
+	0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x88, 0x01, 0x01, 0x12, 0x24, 0x0a, 0x06,
+	0x74, 0x72, 0x61, 0x63, 0x6b, 0x73, 0x18, 0x04, 0x20, 0x03, 0x28, 0x0e, 0x32, 0x0c, 0x2e, 0x62,
+	0x6f, 0x6f, 0x6b, 0x79, 0x2e, 0x54, 0x72, 0x61, 0x63, 0x6b, 0x52, 0x06, 0x74, 0x72, 0x61, 0x63,
+	0x6b, 0x73, 0x12, 0x2b, 0x0a, 0x08, 0x73, 0x65, 0x6d, 0x65, 0x73, 0x74, 0x65, 0x72, 0x18, 0x05,
+	0x20, 0x01, 0x28, 0x0e, 0x32, 0x0f, 0x2e, 0x62, 0x6f, 0x6f, 0x6b, 0x79, 0x2e, 0x53, 0x65, 0x6d,
+	0x65, 0x73, 0x74, 0x65, 0x72, 0x52, 0x08, 0x73, 0x65, 0x6d, 0x65, 0x73, 0x74, 0x65, 0x72, 0x12,
+	0x12, 0x0a, 0x04, 0x79, 0x65, 0x61, 0x72, 0x18, 0x06, 0x20, 0x01, 0x28, 0x05, 0x52, 0x04, 0x79,
+	0x65, 0x61, 0x72, 0x42, 0x0e, 0x0a, 0x0c, 0x5f, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74,
+	0x69, 0x6f, 0x6e, 0x22, 0x92, 0x02, 0x0a, 0x04, 0x4e, 0x6f, 0x74, 0x65, 0x12, 0x0e, 0x0a, 0x02,
+	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x1b, 0x0a, 0x09,
+	0x63, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x08, 0x63, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x49, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x69, 0x74,
+	0x6c, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x12,
+	0x12, 0x0a, 0x04, 0x62, 0x6f, 0x64, 0x79, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x62,
+	0x6f, 0x64, 0x79, 0x12, 0x39, 0x0a, 0x0a, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x5f, 0x61,
+	0x74, 0x18, 0x05, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65,
+	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74,
+	0x61, 0x6d, 0x70, 0x52, 0x09, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x12, 0x3e,
+	0x0a, 0x0a, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18, 0x06, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x48, 0x00,
+	0x52, 0x09, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x88, 0x01, 0x01, 0x12, 0x29,
+	0x0a, 0x09, 0x70, 0x75, 0x62, 0x6c, 0x69, 0x73, 0x68, 0x65, 0x72, 0x18, 0x07, 0x20, 0x01, 0x28,
+	0x0b, 0x32, 0x0b, 0x2e, 0x62, 0x6f, 0x6f, 0x6b, 0x79, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x52, 0x09,
+	0x70, 0x75, 0x62, 0x6c, 0x69, 0x73, 0x68, 0x65, 0x72, 0x42, 0x0d, 0x0a, 0x0b, 0x5f, 0x75, 0x70,
+	0x64, 0x61, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x22, 0xa8, 0x01, 0x0a, 0x04, 0x55, 0x73, 0x65,
+	0x72, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69,
+	0x64, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x18, 0x03,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x12, 0x2b, 0x0a, 0x08, 0x70,
+	0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0f, 0x2e,
+	0x62, 0x6f, 0x6f, 0x6b, 0x79, 0x2e, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x52, 0x08,
+	0x70, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x12, 0x39, 0x0a, 0x0a, 0x63, 0x72, 0x65, 0x61,
+	0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18, 0x05, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67,
+	0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54,
+	0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x52, 0x09, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65,
+	0x64, 0x41, 0x74, 0x22, 0x4b, 0x0a, 0x08, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x12,
+	0x1a, 0x0a, 0x08, 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x08, 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x12, 0x23, 0x0a, 0x0d, 0x70,
+	0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x5f, 0x68, 0x61, 0x73, 0x68, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x0c, 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x48, 0x61, 0x73, 0x68,
+	0x22, 0xc6, 0x01, 0x0a, 0x10, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x75, 0x72, 0x73,
+	0x65, 0x44, 0x61, 0x74, 0x61, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x12, 0x25, 0x0a, 0x0b, 0x64,
+	0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09,
+	0x48, 0x00, 0x52, 0x0b, 0x64, 0x65, 0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x88,
+	0x01, 0x01, 0x12, 0x24, 0x0a, 0x06, 0x74, 0x72, 0x61, 0x63, 0x6b, 0x73, 0x18, 0x03, 0x20, 0x03,
+	0x28, 0x0e, 0x32, 0x0c, 0x2e, 0x62, 0x6f, 0x6f, 0x6b, 0x79, 0x2e, 0x54, 0x72, 0x61, 0x63, 0x6b,
+	0x52, 0x06, 0x74, 0x72, 0x61, 0x63, 0x6b, 0x73, 0x12, 0x2b, 0x0a, 0x08, 0x73, 0x65, 0x6d, 0x65,
+	0x73, 0x74, 0x65, 0x72, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x0f, 0x2e, 0x62, 0x6f, 0x6f,
+	0x6b, 0x79, 0x2e, 0x53, 0x65, 0x6d, 0x65, 0x73, 0x74, 0x65, 0x72, 0x52, 0x08, 0x73, 0x65, 0x6d,
+	0x65, 0x73, 0x74, 0x65, 0x72, 0x12, 0x12, 0x0a, 0x04, 0x79, 0x65, 0x61, 0x72, 0x18, 0x05, 0x20,
+	0x01, 0x28, 0x05, 0x52, 0x04, 0x79, 0x65, 0x61, 0x72, 0x42, 0x0e, 0x0a, 0x0c, 0x5f, 0x64, 0x65,
+	0x73, 0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x22, 0x42, 0x0a, 0x13, 0x43, 0x72, 0x65,
+	0x61, 0x74, 0x65, 0x43, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x12, 0x2b, 0x0a, 0x04, 0x64, 0x61, 0x74, 0x61, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x17,
+	0x2e, 0x62, 0x6f, 0x6f, 0x6b, 0x79, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x75,
+	0x72, 0x73, 0x65, 0x44, 0x61, 0x74, 0x61, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x22, 0x3d, 0x0a,
+	0x14, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x25, 0x0a, 0x06, 0x63, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x62, 0x6f, 0x6f, 0x6b, 0x79, 0x2e, 0x43, 0x6f,
+	0x75, 0x72, 0x73, 0x65, 0x52, 0x06, 0x63, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x22, 0x22, 0x0a, 0x10,
+	0x47, 0x65, 0x74, 0x43, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64,
+	0x22, 0x3a, 0x0a, 0x11, 0x47, 0x65, 0x74, 0x43, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x25, 0x0a, 0x06, 0x63, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x62, 0x6f, 0x6f, 0x6b, 0x79, 0x2e, 0x43, 0x6f,
+	0x75, 0x72, 0x73, 0x65, 0x52, 0x06, 0x63, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x22, 0x42, 0x0a, 0x13,
+	0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x52, 0x65, 0x71, 0x75,
+	0x65, 0x73, 0x74, 0x12, 0x2b, 0x0a, 0x04, 0x64, 0x61, 0x74, 0x61, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x0b, 0x32, 0x17, 0x2e, 0x62, 0x6f, 0x6f, 0x6b, 0x79, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65,
+	0x43, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x44, 0x61, 0x74, 0x61, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61,
+	0x22, 0x3d, 0x0a, 0x14, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x75, 0x72, 0x73, 0x65,
+	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x25, 0x0a, 0x06, 0x63, 0x6f, 0x75, 0x72,
 	0x73, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x62, 0x6f, 0x6f, 0x6b, 0x79,
 	0x2e, 0x43, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x52, 0x06, 0x63, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x22,
-	0x3d, 0x0a, 0x14, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x43, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x52,
-	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x25, 0x0a, 0x06, 0x63, 0x6f, 0x75, 0x72, 0x73,
-	0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x62, 0x6f, 0x6f, 0x6b, 0x79, 0x2e,
-	0x43, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x52, 0x06, 0x63, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x22, 0x25,
-	0x0a, 0x13, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x43, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0x16, 0x0a, 0x14, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x43,
-	0x6f, 0x75, 0x72, 0x73, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x14, 0x0a,
-	0x12, 0x4c, 0x69, 0x73, 0x74, 0x43, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75,
-	0x65, 0x73, 0x74, 0x22, 0x3e, 0x0a, 0x13, 0x4c, 0x69, 0x73, 0x74, 0x43, 0x6f, 0x75, 0x72, 0x73,
-	0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x27, 0x0a, 0x07, 0x63, 0x6f,
-	0x75, 0x72, 0x73, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x62, 0x6f,
-	0x6f, 0x6b, 0x79, 0x2e, 0x43, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x52, 0x07, 0x63, 0x6f, 0x75, 0x72,
-	0x73, 0x65, 0x73, 0x22, 0x34, 0x0a, 0x11, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x4e, 0x6f, 0x74,
-	0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1f, 0x0a, 0x04, 0x6e, 0x6f, 0x74, 0x65,
-	0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0b, 0x2e, 0x62, 0x6f, 0x6f, 0x6b, 0x79, 0x2e, 0x4e,
-	0x6f, 0x74, 0x65, 0x52, 0x04, 0x6e, 0x6f, 0x74, 0x65, 0x22, 0x35, 0x0a, 0x12, 0x43, 0x72, 0x65,
-	0x61, 0x74, 0x65, 0x4e, 0x6f, 0x74, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12,
-	0x1f, 0x0a, 0x04, 0x6e, 0x6f, 0x74, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0b, 0x2e,
-	0x62, 0x6f, 0x6f, 0x6b, 0x79, 0x2e, 0x4e, 0x6f, 0x74, 0x65, 0x52, 0x04, 0x6e, 0x6f, 0x74, 0x65,
-	0x22, 0x20, 0x0a, 0x0e, 0x47, 0x65, 0x74, 0x4e, 0x6f, 0x74, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02,
-	0x69, 0x64, 0x22, 0x32, 0x0a, 0x0f, 0x47, 0x65, 0x74, 0x4e, 0x6f, 0x74, 0x65, 0x52, 0x65, 0x73,
-	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1f, 0x0a, 0x04, 0x6e, 0x6f, 0x74, 0x65, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x0b, 0x32, 0x0b, 0x2e, 0x62, 0x6f, 0x6f, 0x6b, 0x79, 0x2e, 0x4e, 0x6f, 0x74, 0x65,
-	0x52, 0x04, 0x6e, 0x6f, 0x74, 0x65, 0x22, 0x34, 0x0a, 0x11, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65,
-	0x4e, 0x6f, 0x74, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1f, 0x0a, 0x04, 0x6e,
-	0x6f, 0x74, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0b, 0x2e, 0x62, 0x6f, 0x6f, 0x6b,
-	0x79, 0x2e, 0x4e, 0x6f, 0x74, 0x65, 0x52, 0x04, 0x6e, 0x6f, 0x74, 0x65, 0x22, 0x35, 0x0a, 0x12,
-	0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4e, 0x6f, 0x74, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x25, 0x0a, 0x13, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x43, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x52,
+	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0x16, 0x0a, 0x14, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65,
+	0x43, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x14,
+	0x0a, 0x12, 0x4c, 0x69, 0x73, 0x74, 0x43, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x73, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x22, 0x3e, 0x0a, 0x13, 0x4c, 0x69, 0x73, 0x74, 0x43, 0x6f, 0x75, 0x72,
+	0x73, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x27, 0x0a, 0x07, 0x63,
+	0x6f, 0x75, 0x72, 0x73, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x62,
+	0x6f, 0x6f, 0x6b, 0x79, 0x2e, 0x43, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x52, 0x07, 0x63, 0x6f, 0x75,
+	0x72, 0x73, 0x65, 0x73, 0x22, 0x70, 0x0a, 0x0e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x4e, 0x6f,
+	0x74, 0x65, 0x44, 0x61, 0x74, 0x61, 0x12, 0x1b, 0x0a, 0x09, 0x63, 0x6f, 0x75, 0x72, 0x73, 0x65,
+	0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x63, 0x6f, 0x75, 0x72, 0x73,
+	0x65, 0x49, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x62, 0x6f, 0x64,
+	0x79, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x62, 0x6f, 0x64, 0x79, 0x12, 0x17, 0x0a,
+	0x07, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x06,
+	0x75, 0x73, 0x65, 0x72, 0x49, 0x64, 0x22, 0x3e, 0x0a, 0x11, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65,
+	0x4e, 0x6f, 0x74, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x29, 0x0a, 0x04, 0x64,
+	0x61, 0x74, 0x61, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x15, 0x2e, 0x62, 0x6f, 0x6f, 0x6b,
+	0x79, 0x2e, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x4e, 0x6f, 0x74, 0x65, 0x44, 0x61, 0x74, 0x61,
+	0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x22, 0x35, 0x0a, 0x12, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65,
+	0x4e, 0x6f, 0x74, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1f, 0x0a, 0x04,
+	0x6e, 0x6f, 0x74, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0b, 0x2e, 0x62, 0x6f, 0x6f,
+	0x6b, 0x79, 0x2e, 0x4e, 0x6f, 0x74, 0x65, 0x52, 0x04, 0x6e, 0x6f, 0x74, 0x65, 0x22, 0x20, 0x0a,
+	0x0e, 0x47, 0x65, 0x74, 0x4e, 0x6f, 0x74, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12,
+	0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22,
+	0x32, 0x0a, 0x0f, 0x47, 0x65, 0x74, 0x4e, 0x6f, 0x74, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
 	0x73, 0x65, 0x12, 0x1f, 0x0a, 0x04, 0x6e, 0x6f, 0x74, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b,
 	0x32, 0x0b, 0x2e, 0x62, 0x6f, 0x6f, 0x6b, 0x79, 0x2e, 0x4e, 0x6f, 0x74, 0x65, 0x52, 0x04, 0x6e,
-	0x6f, 0x74, 0x65, 0x22, 0x23, 0x0a, 0x11, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x4e, 0x6f, 0x74,
-	0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0x14, 0x0a, 0x12, 0x44, 0x65, 0x6c, 0x65,
-	0x74, 0x65, 0x4e, 0x6f, 0x74, 0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x2f,
-	0x0a, 0x10, 0x4c, 0x69, 0x73, 0x74, 0x4e, 0x6f, 0x74, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x12, 0x1b, 0x0a, 0x09, 0x63, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x5f, 0x69, 0x64, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x63, 0x6f, 0x75, 0x72, 0x73, 0x65, 0x49, 0x64, 0x22,
-	0x36, 0x0a, 0x11, 0x4c, 0x69, 0x73, 0x74, 0x4e, 0x6f, 0x74, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x12, 0x21, 0x0a, 0x05, 0x6e, 0x6f, 0x74, 0x65, 0x73, 0x18, 0x01, 0x20,
-	0x03, 0x28, 0x0b, 0x32, 0x0b, 0x2e, 0x62, 0x6f, 0x6f, 0x6b, 0x79, 0x2e, 0x4e, 0x6f, 0x74, 0x65,
-	0x52, 0x05, 0x6e, 0x6f, 0x74, 0x65, 0x73, 0x32, 0xf8, 0x05, 0x0a, 0x0c, 0x42, 0x6f, 0x6f, 0x6b,
+	0x6f, 0x74, 0x65, 0x22, 0x3e, 0x0a, 0x11, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4e, 0x6f, 0x74,
+	0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x29, 0x0a, 0x04, 0x64, 0x61, 0x74, 0x61,
+	0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x15, 0x2e, 0x62, 0x6f, 0x6f, 0x6b, 0x79, 0x2e, 0x43,
+	0x72, 0x65, 0x61, 0x74, 0x65, 0x4e, 0x6f, 0x74, 0x65, 0x44, 0x61, 0x74, 0x61, 0x52, 0x04, 0x64,
+	0x61, 0x74, 0x61, 0x22, 0x35, 0x0a, 0x12, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x4e, 0x6f, 0x74,
+	0x65, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x1f, 0x0a, 0x04, 0x6e, 0x6f, 0x74,
+	0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0b, 0x2e, 0x62, 0x6f, 0x6f, 0x6b, 0x79, 0x2e,
+	0x4e, 0x6f, 0x74, 0x65, 0x52, 0x04, 0x6e, 0x6f, 0x74, 0x65, 0x22, 0x23, 0x0a, 0x11, 0x44, 0x65,
+	0x6c, 0x65, 0x74, 0x65, 0x4e, 0x6f, 0x74, 0x65, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12,
+	0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22,
+	0x14, 0x0a, 0x12, 0x44, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x4e, 0x6f, 0x74, 0x65, 0x52, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x2f, 0x0a, 0x10, 0x4c, 0x69, 0x73, 0x74, 0x4e, 0x6f, 0x74,
+	0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1b, 0x0a, 0x09, 0x63, 0x6f, 0x75,
+	0x72, 0x73, 0x65, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x63, 0x6f,
+	0x75, 0x72, 0x73, 0x65, 0x49, 0x64, 0x22, 0x36, 0x0a, 0x11, 0x4c, 0x69, 0x73, 0x74, 0x4e, 0x6f,
+	0x74, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x21, 0x0a, 0x05, 0x6e,
+	0x6f, 0x74, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0b, 0x2e, 0x62, 0x6f, 0x6f,
+	0x6b, 0x79, 0x2e, 0x4e, 0x6f, 0x74, 0x65, 0x52, 0x05, 0x6e, 0x6f, 0x74, 0x65, 0x73, 0x2a, 0xd7,
+	0x01, 0x0a, 0x05, 0x54, 0x72, 0x61, 0x63, 0x6b, 0x12, 0x11, 0x0a, 0x0d, 0x54, 0x52, 0x41, 0x43,
+	0x4b, 0x5f, 0x55, 0x4e, 0x4b, 0x4e, 0x4f, 0x57, 0x4e, 0x10, 0x00, 0x12, 0x0e, 0x0a, 0x0a, 0x54,
+	0x52, 0x41, 0x43, 0x4b, 0x5f, 0x43, 0x4f, 0x52, 0x45, 0x10, 0x01, 0x12, 0x1e, 0x0a, 0x1a, 0x54,
+	0x52, 0x41, 0x43, 0x4b, 0x5f, 0x53, 0x4f, 0x46, 0x54, 0x57, 0x41, 0x52, 0x45, 0x5f, 0x44, 0x45,
+	0x56, 0x45, 0x4c, 0x4f, 0x50, 0x4d, 0x45, 0x4e, 0x54, 0x10, 0x02, 0x12, 0x18, 0x0a, 0x14, 0x54,
+	0x52, 0x41, 0x43, 0x4b, 0x5f, 0x43, 0x59, 0x42, 0x45, 0x52, 0x5f, 0x53, 0x45, 0x43, 0x55, 0x52,
+	0x49, 0x54, 0x59, 0x10, 0x03, 0x12, 0x1a, 0x0a, 0x16, 0x54, 0x52, 0x41, 0x43, 0x4b, 0x5f, 0x47,
+	0x41, 0x4d, 0x45, 0x5f, 0x44, 0x45, 0x56, 0x45, 0x4c, 0x4f, 0x50, 0x4d, 0x45, 0x4e, 0x54, 0x10,
+	0x04, 0x12, 0x29, 0x0a, 0x25, 0x54, 0x52, 0x41, 0x43, 0x4b, 0x5f, 0x41, 0x50, 0x50, 0x4c, 0x49,
+	0x45, 0x44, 0x5f, 0x41, 0x52, 0x54, 0x49, 0x46, 0x49, 0x43, 0x49, 0x41, 0x4c, 0x5f, 0x49, 0x4e,
+	0x54, 0x45, 0x4c, 0x4c, 0x49, 0x47, 0x45, 0x4e, 0x43, 0x45, 0x10, 0x05, 0x12, 0x12, 0x0a, 0x0e,
+	0x54, 0x52, 0x41, 0x43, 0x4b, 0x5f, 0x52, 0x4f, 0x42, 0x4f, 0x54, 0x49, 0x43, 0x53, 0x10, 0x06,
+	0x12, 0x16, 0x0a, 0x12, 0x54, 0x52, 0x41, 0x43, 0x4b, 0x5f, 0x44, 0x41, 0x54, 0x41, 0x5f, 0x53,
+	0x43, 0x49, 0x45, 0x4e, 0x43, 0x45, 0x10, 0x07, 0x2a, 0x5d, 0x0a, 0x08, 0x53, 0x65, 0x6d, 0x65,
+	0x73, 0x74, 0x65, 0x72, 0x12, 0x14, 0x0a, 0x10, 0x53, 0x45, 0x4d, 0x45, 0x53, 0x54, 0x45, 0x52,
+	0x5f, 0x55, 0x4e, 0x4b, 0x4e, 0x4f, 0x57, 0x4e, 0x10, 0x00, 0x12, 0x11, 0x0a, 0x0d, 0x53, 0x45,
+	0x4d, 0x45, 0x53, 0x54, 0x45, 0x52, 0x5f, 0x46, 0x41, 0x4c, 0x4c, 0x10, 0x01, 0x12, 0x13, 0x0a,
+	0x0f, 0x53, 0x45, 0x4d, 0x45, 0x53, 0x54, 0x45, 0x52, 0x5f, 0x53, 0x50, 0x52, 0x49, 0x4e, 0x47,
+	0x10, 0x02, 0x12, 0x13, 0x0a, 0x0f, 0x53, 0x45, 0x4d, 0x45, 0x53, 0x54, 0x45, 0x52, 0x5f, 0x53,
+	0x55, 0x4d, 0x4d, 0x45, 0x52, 0x10, 0x03, 0x32, 0xf8, 0x05, 0x0a, 0x0c, 0x42, 0x6f, 0x6f, 0x6b,
 	0x79, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x44, 0x0a, 0x0b, 0x48, 0x65, 0x61, 0x6c,
 	0x74, 0x68, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x12, 0x19, 0x2e, 0x62, 0x6f, 0x6f, 0x6b, 0x79, 0x2e,
 	0x48, 0x65, 0x61, 0x6c, 0x74, 0x68, 0x43, 0x68, 0x65, 0x63, 0x6b, 0x52, 0x65, 0x71, 0x75, 0x65,
@@ -1296,73 +1823,90 @@ func file_api_booky_booky_proto_rawDescGZIP() []byte {
 	return file_api_booky_booky_proto_rawDescData
 }
 
-var file_api_booky_booky_proto_msgTypes = make([]protoimpl.MessageInfo, 24)
+var file_api_booky_booky_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_api_booky_booky_proto_msgTypes = make([]protoimpl.MessageInfo, 28)
 var file_api_booky_booky_proto_goTypes = []interface{}{
-	(*HealthCheckRequest)(nil),   // 0: booky.HealthCheckRequest
-	(*HealthCheckResponse)(nil),  // 1: booky.HealthCheckResponse
-	(*Course)(nil),               // 2: booky.Course
-	(*Note)(nil),                 // 3: booky.Note
-	(*CreateCourseRequest)(nil),  // 4: booky.CreateCourseRequest
-	(*CreateCourseResponse)(nil), // 5: booky.CreateCourseResponse
-	(*GetCourseRequest)(nil),     // 6: booky.GetCourseRequest
-	(*GetCourseResponse)(nil),    // 7: booky.GetCourseResponse
-	(*UpdateCourseRequest)(nil),  // 8: booky.UpdateCourseRequest
-	(*UpdateCourseResponse)(nil), // 9: booky.UpdateCourseResponse
-	(*DeleteCourseRequest)(nil),  // 10: booky.DeleteCourseRequest
-	(*DeleteCourseResponse)(nil), // 11: booky.DeleteCourseResponse
-	(*ListCoursesRequest)(nil),   // 12: booky.ListCoursesRequest
-	(*ListCoursesResponse)(nil),  // 13: booky.ListCoursesResponse
-	(*CreateNoteRequest)(nil),    // 14: booky.CreateNoteRequest
-	(*CreateNoteResponse)(nil),   // 15: booky.CreateNoteResponse
-	(*GetNoteRequest)(nil),       // 16: booky.GetNoteRequest
-	(*GetNoteResponse)(nil),      // 17: booky.GetNoteResponse
-	(*UpdateNoteRequest)(nil),    // 18: booky.UpdateNoteRequest
-	(*UpdateNoteResponse)(nil),   // 19: booky.UpdateNoteResponse
-	(*DeleteNoteRequest)(nil),    // 20: booky.DeleteNoteRequest
-	(*DeleteNoteResponse)(nil),   // 21: booky.DeleteNoteResponse
-	(*ListNotesRequest)(nil),     // 22: booky.ListNotesRequest
-	(*ListNotesResponse)(nil),    // 23: booky.ListNotesResponse
+	(Track)(0),                    // 0: booky.Track
+	(Semester)(0),                 // 1: booky.Semester
+	(*HealthCheckRequest)(nil),    // 2: booky.HealthCheckRequest
+	(*HealthCheckResponse)(nil),   // 3: booky.HealthCheckResponse
+	(*Course)(nil),                // 4: booky.Course
+	(*Note)(nil),                  // 5: booky.Note
+	(*User)(nil),                  // 6: booky.User
+	(*Password)(nil),              // 7: booky.Password
+	(*CreateCourseData)(nil),      // 8: booky.CreateCourseData
+	(*CreateCourseRequest)(nil),   // 9: booky.CreateCourseRequest
+	(*CreateCourseResponse)(nil),  // 10: booky.CreateCourseResponse
+	(*GetCourseRequest)(nil),      // 11: booky.GetCourseRequest
+	(*GetCourseResponse)(nil),     // 12: booky.GetCourseResponse
+	(*UpdateCourseRequest)(nil),   // 13: booky.UpdateCourseRequest
+	(*UpdateCourseResponse)(nil),  // 14: booky.UpdateCourseResponse
+	(*DeleteCourseRequest)(nil),   // 15: booky.DeleteCourseRequest
+	(*DeleteCourseResponse)(nil),  // 16: booky.DeleteCourseResponse
+	(*ListCoursesRequest)(nil),    // 17: booky.ListCoursesRequest
+	(*ListCoursesResponse)(nil),   // 18: booky.ListCoursesResponse
+	(*CreateNoteData)(nil),        // 19: booky.CreateNoteData
+	(*CreateNoteRequest)(nil),     // 20: booky.CreateNoteRequest
+	(*CreateNoteResponse)(nil),    // 21: booky.CreateNoteResponse
+	(*GetNoteRequest)(nil),        // 22: booky.GetNoteRequest
+	(*GetNoteResponse)(nil),       // 23: booky.GetNoteResponse
+	(*UpdateNoteRequest)(nil),     // 24: booky.UpdateNoteRequest
+	(*UpdateNoteResponse)(nil),    // 25: booky.UpdateNoteResponse
+	(*DeleteNoteRequest)(nil),     // 26: booky.DeleteNoteRequest
+	(*DeleteNoteResponse)(nil),    // 27: booky.DeleteNoteResponse
+	(*ListNotesRequest)(nil),      // 28: booky.ListNotesRequest
+	(*ListNotesResponse)(nil),     // 29: booky.ListNotesResponse
+	(*timestamppb.Timestamp)(nil), // 30: google.protobuf.Timestamp
 }
 var file_api_booky_booky_proto_depIdxs = []int32{
-	2,  // 0: booky.CreateCourseRequest.course:type_name -> booky.Course
-	2,  // 1: booky.CreateCourseResponse.course:type_name -> booky.Course
-	2,  // 2: booky.GetCourseResponse.course:type_name -> booky.Course
-	2,  // 3: booky.UpdateCourseRequest.course:type_name -> booky.Course
-	2,  // 4: booky.UpdateCourseResponse.course:type_name -> booky.Course
-	2,  // 5: booky.ListCoursesResponse.courses:type_name -> booky.Course
-	3,  // 6: booky.CreateNoteRequest.note:type_name -> booky.Note
-	3,  // 7: booky.CreateNoteResponse.note:type_name -> booky.Note
-	3,  // 8: booky.GetNoteResponse.note:type_name -> booky.Note
-	3,  // 9: booky.UpdateNoteRequest.note:type_name -> booky.Note
-	3,  // 10: booky.UpdateNoteResponse.note:type_name -> booky.Note
-	3,  // 11: booky.ListNotesResponse.notes:type_name -> booky.Note
-	0,  // 12: booky.BookyService.HealthCheck:input_type -> booky.HealthCheckRequest
-	4,  // 13: booky.BookyService.CreateCourse:input_type -> booky.CreateCourseRequest
-	6,  // 14: booky.BookyService.GetCourse:input_type -> booky.GetCourseRequest
-	8,  // 15: booky.BookyService.UpdateCourse:input_type -> booky.UpdateCourseRequest
-	10, // 16: booky.BookyService.DeleteCourse:input_type -> booky.DeleteCourseRequest
-	12, // 17: booky.BookyService.ListCourses:input_type -> booky.ListCoursesRequest
-	14, // 18: booky.BookyService.CreateNote:input_type -> booky.CreateNoteRequest
-	16, // 19: booky.BookyService.GetNote:input_type -> booky.GetNoteRequest
-	18, // 20: booky.BookyService.UpdateNote:input_type -> booky.UpdateNoteRequest
-	20, // 21: booky.BookyService.DeleteNote:input_type -> booky.DeleteNoteRequest
-	22, // 22: booky.BookyService.ListNotes:input_type -> booky.ListNotesRequest
-	1,  // 23: booky.BookyService.HealthCheck:output_type -> booky.HealthCheckResponse
-	5,  // 24: booky.BookyService.CreateCourse:output_type -> booky.CreateCourseResponse
-	7,  // 25: booky.BookyService.GetCourse:output_type -> booky.GetCourseResponse
-	9,  // 26: booky.BookyService.UpdateCourse:output_type -> booky.UpdateCourseResponse
-	11, // 27: booky.BookyService.DeleteCourse:output_type -> booky.DeleteCourseResponse
-	13, // 28: booky.BookyService.ListCourses:output_type -> booky.ListCoursesResponse
-	15, // 29: booky.BookyService.CreateNote:output_type -> booky.CreateNoteResponse
-	17, // 30: booky.BookyService.GetNote:output_type -> booky.GetNoteResponse
-	19, // 31: booky.BookyService.UpdateNote:output_type -> booky.UpdateNoteResponse
-	21, // 32: booky.BookyService.DeleteNote:output_type -> booky.DeleteNoteResponse
-	23, // 33: booky.BookyService.ListNotes:output_type -> booky.ListNotesResponse
-	23, // [23:34] is the sub-list for method output_type
-	12, // [12:23] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	0,  // 0: booky.Course.tracks:type_name -> booky.Track
+	1,  // 1: booky.Course.semester:type_name -> booky.Semester
+	30, // 2: booky.Note.created_at:type_name -> google.protobuf.Timestamp
+	30, // 3: booky.Note.updated_at:type_name -> google.protobuf.Timestamp
+	6,  // 4: booky.Note.publisher:type_name -> booky.User
+	7,  // 5: booky.User.password:type_name -> booky.Password
+	30, // 6: booky.User.created_at:type_name -> google.protobuf.Timestamp
+	0,  // 7: booky.CreateCourseData.tracks:type_name -> booky.Track
+	1,  // 8: booky.CreateCourseData.semester:type_name -> booky.Semester
+	8,  // 9: booky.CreateCourseRequest.data:type_name -> booky.CreateCourseData
+	4,  // 10: booky.CreateCourseResponse.course:type_name -> booky.Course
+	4,  // 11: booky.GetCourseResponse.course:type_name -> booky.Course
+	8,  // 12: booky.UpdateCourseRequest.data:type_name -> booky.CreateCourseData
+	4,  // 13: booky.UpdateCourseResponse.course:type_name -> booky.Course
+	4,  // 14: booky.ListCoursesResponse.courses:type_name -> booky.Course
+	19, // 15: booky.CreateNoteRequest.data:type_name -> booky.CreateNoteData
+	5,  // 16: booky.CreateNoteResponse.note:type_name -> booky.Note
+	5,  // 17: booky.GetNoteResponse.note:type_name -> booky.Note
+	19, // 18: booky.UpdateNoteRequest.data:type_name -> booky.CreateNoteData
+	5,  // 19: booky.UpdateNoteResponse.note:type_name -> booky.Note
+	5,  // 20: booky.ListNotesResponse.notes:type_name -> booky.Note
+	2,  // 21: booky.BookyService.HealthCheck:input_type -> booky.HealthCheckRequest
+	9,  // 22: booky.BookyService.CreateCourse:input_type -> booky.CreateCourseRequest
+	11, // 23: booky.BookyService.GetCourse:input_type -> booky.GetCourseRequest
+	13, // 24: booky.BookyService.UpdateCourse:input_type -> booky.UpdateCourseRequest
+	15, // 25: booky.BookyService.DeleteCourse:input_type -> booky.DeleteCourseRequest
+	17, // 26: booky.BookyService.ListCourses:input_type -> booky.ListCoursesRequest
+	20, // 27: booky.BookyService.CreateNote:input_type -> booky.CreateNoteRequest
+	22, // 28: booky.BookyService.GetNote:input_type -> booky.GetNoteRequest
+	24, // 29: booky.BookyService.UpdateNote:input_type -> booky.UpdateNoteRequest
+	26, // 30: booky.BookyService.DeleteNote:input_type -> booky.DeleteNoteRequest
+	28, // 31: booky.BookyService.ListNotes:input_type -> booky.ListNotesRequest
+	3,  // 32: booky.BookyService.HealthCheck:output_type -> booky.HealthCheckResponse
+	10, // 33: booky.BookyService.CreateCourse:output_type -> booky.CreateCourseResponse
+	12, // 34: booky.BookyService.GetCourse:output_type -> booky.GetCourseResponse
+	14, // 35: booky.BookyService.UpdateCourse:output_type -> booky.UpdateCourseResponse
+	16, // 36: booky.BookyService.DeleteCourse:output_type -> booky.DeleteCourseResponse
+	18, // 37: booky.BookyService.ListCourses:output_type -> booky.ListCoursesResponse
+	21, // 38: booky.BookyService.CreateNote:output_type -> booky.CreateNoteResponse
+	23, // 39: booky.BookyService.GetNote:output_type -> booky.GetNoteResponse
+	25, // 40: booky.BookyService.UpdateNote:output_type -> booky.UpdateNoteResponse
+	27, // 41: booky.BookyService.DeleteNote:output_type -> booky.DeleteNoteResponse
+	29, // 42: booky.BookyService.ListNotes:output_type -> booky.ListNotesResponse
+	32, // [32:43] is the sub-list for method output_type
+	21, // [21:32] is the sub-list for method input_type
+	21, // [21:21] is the sub-list for extension type_name
+	21, // [21:21] is the sub-list for extension extendee
+	0,  // [0:21] is the sub-list for field type_name
 }
 
 func init() { file_api_booky_booky_proto_init() }
@@ -1420,7 +1964,7 @@ func file_api_booky_booky_proto_init() {
 			}
 		}
 		file_api_booky_booky_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateCourseRequest); i {
+			switch v := v.(*User); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1432,7 +1976,7 @@ func file_api_booky_booky_proto_init() {
 			}
 		}
 		file_api_booky_booky_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateCourseResponse); i {
+			switch v := v.(*Password); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1444,7 +1988,7 @@ func file_api_booky_booky_proto_init() {
 			}
 		}
 		file_api_booky_booky_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetCourseRequest); i {
+			switch v := v.(*CreateCourseData); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1456,7 +2000,7 @@ func file_api_booky_booky_proto_init() {
 			}
 		}
 		file_api_booky_booky_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetCourseResponse); i {
+			switch v := v.(*CreateCourseRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1468,7 +2012,7 @@ func file_api_booky_booky_proto_init() {
 			}
 		}
 		file_api_booky_booky_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UpdateCourseRequest); i {
+			switch v := v.(*CreateCourseResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1480,7 +2024,7 @@ func file_api_booky_booky_proto_init() {
 			}
 		}
 		file_api_booky_booky_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UpdateCourseResponse); i {
+			switch v := v.(*GetCourseRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1492,7 +2036,7 @@ func file_api_booky_booky_proto_init() {
 			}
 		}
 		file_api_booky_booky_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteCourseRequest); i {
+			switch v := v.(*GetCourseResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1504,7 +2048,7 @@ func file_api_booky_booky_proto_init() {
 			}
 		}
 		file_api_booky_booky_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteCourseResponse); i {
+			switch v := v.(*UpdateCourseRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1516,7 +2060,7 @@ func file_api_booky_booky_proto_init() {
 			}
 		}
 		file_api_booky_booky_proto_msgTypes[12].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListCoursesRequest); i {
+			switch v := v.(*UpdateCourseResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1528,7 +2072,7 @@ func file_api_booky_booky_proto_init() {
 			}
 		}
 		file_api_booky_booky_proto_msgTypes[13].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListCoursesResponse); i {
+			switch v := v.(*DeleteCourseRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1540,7 +2084,7 @@ func file_api_booky_booky_proto_init() {
 			}
 		}
 		file_api_booky_booky_proto_msgTypes[14].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateNoteRequest); i {
+			switch v := v.(*DeleteCourseResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1552,7 +2096,7 @@ func file_api_booky_booky_proto_init() {
 			}
 		}
 		file_api_booky_booky_proto_msgTypes[15].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*CreateNoteResponse); i {
+			switch v := v.(*ListCoursesRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1564,7 +2108,7 @@ func file_api_booky_booky_proto_init() {
 			}
 		}
 		file_api_booky_booky_proto_msgTypes[16].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetNoteRequest); i {
+			switch v := v.(*ListCoursesResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1576,7 +2120,7 @@ func file_api_booky_booky_proto_init() {
 			}
 		}
 		file_api_booky_booky_proto_msgTypes[17].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetNoteResponse); i {
+			switch v := v.(*CreateNoteData); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1588,7 +2132,7 @@ func file_api_booky_booky_proto_init() {
 			}
 		}
 		file_api_booky_booky_proto_msgTypes[18].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UpdateNoteRequest); i {
+			switch v := v.(*CreateNoteRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1600,7 +2144,7 @@ func file_api_booky_booky_proto_init() {
 			}
 		}
 		file_api_booky_booky_proto_msgTypes[19].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*UpdateNoteResponse); i {
+			switch v := v.(*CreateNoteResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1612,7 +2156,7 @@ func file_api_booky_booky_proto_init() {
 			}
 		}
 		file_api_booky_booky_proto_msgTypes[20].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteNoteRequest); i {
+			switch v := v.(*GetNoteRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1624,7 +2168,7 @@ func file_api_booky_booky_proto_init() {
 			}
 		}
 		file_api_booky_booky_proto_msgTypes[21].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*DeleteNoteResponse); i {
+			switch v := v.(*GetNoteResponse); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1636,7 +2180,7 @@ func file_api_booky_booky_proto_init() {
 			}
 		}
 		file_api_booky_booky_proto_msgTypes[22].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ListNotesRequest); i {
+			switch v := v.(*UpdateNoteRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -1648,6 +2192,54 @@ func file_api_booky_booky_proto_init() {
 			}
 		}
 		file_api_booky_booky_proto_msgTypes[23].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*UpdateNoteResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_booky_booky_proto_msgTypes[24].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteNoteRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_booky_booky_proto_msgTypes[25].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*DeleteNoteResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_booky_booky_proto_msgTypes[26].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ListNotesRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_api_booky_booky_proto_msgTypes[27].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*ListNotesResponse); i {
 			case 0:
 				return &v.state
@@ -1660,18 +2252,22 @@ func file_api_booky_booky_proto_init() {
 			}
 		}
 	}
+	file_api_booky_booky_proto_msgTypes[2].OneofWrappers = []interface{}{}
+	file_api_booky_booky_proto_msgTypes[3].OneofWrappers = []interface{}{}
+	file_api_booky_booky_proto_msgTypes[6].OneofWrappers = []interface{}{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_api_booky_booky_proto_rawDesc,
-			NumEnums:      0,
-			NumMessages:   24,
+			NumEnums:      2,
+			NumMessages:   28,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_api_booky_booky_proto_goTypes,
 		DependencyIndexes: file_api_booky_booky_proto_depIdxs,
+		EnumInfos:         file_api_booky_booky_proto_enumTypes,
 		MessageInfos:      file_api_booky_booky_proto_msgTypes,
 	}.Build()
 	File_api_booky_booky_proto = out.File

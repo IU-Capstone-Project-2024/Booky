@@ -4,6 +4,8 @@ package booky;
 
 option go_package = "api/booky";
 
+import "google/protobuf/timestamp.proto";
+
 // Service definition
 service BookyService {
     rpc HealthCheck (HealthCheckRequest) returns (HealthCheckResponse);
@@ -32,7 +34,28 @@ message HealthCheckResponse {
 message Course {
     string id = 1;
     string title = 2;
-    string description = 3;
+    optional string description = 3;
+    repeated Track tracks = 4;
+    Semester semester = 5;
+    int32 year = 6;
+}
+
+enum Track {
+    TRACK_UNKNOWN = 0;
+    TRACK_CORE = 1;
+    TRACK_SOFTWARE_DEVELOPMENT = 2;
+    TRACK_CYBER_SECURITY = 3;
+    TRACK_GAME_DEVELOPMENT = 4;
+    TRACK_APPLIED_ARTIFICIAL_INTELLIGENCE = 5;
+    TRACK_ROBOTICS = 6;
+    TRACK_DATA_SCIENCE = 7;
+}
+
+enum Semester {
+    SEMESTER_UNKNOWN = 0;
+    SEMESTER_FALL = 1;
+    SEMESTER_SPRING = 2;
+    SEMESTER_SUMMER = 3;
 }
 
 message Note {
@@ -40,10 +63,34 @@ message Note {
     string course_id = 2;
     string title = 3;
     string body = 4;
+    google.protobuf.Timestamp created_at = 5;
+    optional google.protobuf.Timestamp updated_at = 6;
+    User publisher = 7;
+}
+
+message User {
+    string id = 1;
+    string name = 2;
+    string email = 3;
+    Password password = 4;
+    google.protobuf.Timestamp created_at = 5;
+}
+
+message Password {
+    string password = 1;
+    string password_hash = 2;
+}
+
+message CreateCourseData {
+    string title = 1;
+    optional string description = 2;
+    repeated Track tracks = 3;
+    Semester semester = 4;
+    int32 year = 5;
 }
 
 message CreateCourseRequest {
-    Course course = 1;
+    CreateCourseData data = 1;
 }
 
 message CreateCourseResponse {
@@ -59,7 +106,7 @@ message GetCourseResponse {
 }
 
 message UpdateCourseRequest {
-    Course course = 1;
+    CreateCourseData data = 1;
 }
 
 message UpdateCourseResponse {
@@ -78,8 +125,15 @@ message ListCoursesResponse {
     repeated Course courses = 1;
 }
 
+message CreateNoteData {
+    string course_id = 1;
+    string title = 2;
+    string body = 3;
+    string user_id = 4;
+}
+
 message CreateNoteRequest {
-    Note note = 1;
+    CreateNoteData data = 1;
 }
 
 message CreateNoteResponse {
@@ -95,7 +149,7 @@ message GetNoteResponse {
 }
 
 message UpdateNoteRequest {
-    Note note = 1;
+    CreateNoteData data = 1;
 }
 
 message UpdateNoteResponse {

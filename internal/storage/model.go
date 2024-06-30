@@ -16,4 +16,7 @@ type DataModel interface {
 	UpdateNote(*models.Note) (*models.Note, error)
 	DeleteNote(string) error
 	ListNotes(string) ([]*models.Note, error)
+
+	// User CRUD
+	GetUser(string) (*models.User, error)
 }

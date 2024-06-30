@@ -4,10 +4,14 @@ import (
 	"booky-back/internal/models"
 	"booky-back/internal/storage"
 	"fmt"
+
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func (s *InMemoryStorage) CreateNote(note *models.Note) (*models.Note, error) {
 	note.ID = fmt.Sprint(len(s.notes) + 1)
+	note.CreatedAt = timestamppb.Now()
+
 	s.notes[note.ID] = note
 	return note, nil
 }
@@ -28,6 +32,8 @@ func (s *InMemoryStorage) UpdateNote(note *models.Note) (*models.Note, error) {
 	}
 
 	s.notes[note.ID] = note
+	s.notes[note.ID].UpdatedAt = timestamppb.Now()
+
 	return note, nil
 }
 
