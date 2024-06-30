@@ -19,4 +19,10 @@ type DataModel interface {
 
 	// User CRUD
 	GetUser(string) (*models.User, error)
+
+	// Files
+	CreateFile(*models.File) (*models.File, error)
+	GetFile(string) (*models.File, error)
+	DeleteFile(string) error
+	ListFiles(string) ([]*models.File, error)
 }

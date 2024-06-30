@@ -10,19 +10,25 @@ import "google/protobuf/timestamp.proto";
 service BookyService {
     rpc HealthCheck (HealthCheckRequest) returns (HealthCheckResponse);
 
-    // Course CRUD
+    // Courses
     rpc CreateCourse(CreateCourseRequest) returns (CreateCourseResponse);
     rpc GetCourse(GetCourseRequest) returns (GetCourseResponse);
     rpc UpdateCourse(UpdateCourseRequest) returns (UpdateCourseResponse);
     rpc DeleteCourse(DeleteCourseRequest) returns (DeleteCourseResponse);
     rpc ListCourses(ListCoursesRequest) returns (ListCoursesResponse);
 
-    // Note CRUD
+    // Notes
     rpc CreateNote(CreateNoteRequest) returns (CreateNoteResponse);
     rpc GetNote(GetNoteRequest) returns (GetNoteResponse);
     rpc UpdateNote(UpdateNoteRequest) returns (UpdateNoteResponse);
     rpc DeleteNote(DeleteNoteRequest) returns (DeleteNoteResponse);
     rpc ListNotes(ListNotesRequest) returns (ListNotesResponse);
+
+    // Files
+    rpc CreateFile (CreateFileRequest) returns (CreateFileResponse);
+    rpc GetFile (GetFileRequest) returns (GetFileResponse);
+    rpc DeleteFile (DeleteFileRequest) returns (DeleteFileResponse);
+    rpc ListFiles (ListFilesRequest) returns (ListFilesResponse);
 }
 
 message HealthCheckRequest {}
@@ -168,4 +174,50 @@ message ListNotesRequest {
 
 message ListNotesResponse {
     repeated Note notes = 1;
+}
+
+message File {
+    string id = 1;
+    string course_id = 2;
+    bytes content = 3;
+    string filename = 4;
+    User publisher = 5;
+    google.protobuf.Timestamp created_at = 6;
+}
+
+message CreateFileData {
+    string course_id = 1;
+    bytes content = 2;
+    string filename = 3;
+    string user_id = 4;
+}
+
+message CreateFileRequest {
+    CreateFileData data = 1;
+}
+
+message CreateFileResponse {
+    File file = 1;
+}
+
+message GetFileRequest {
+    string id = 1;
+}
+
+message GetFileResponse {
+    File file = 1;
+}
+
+message DeleteFileRequest {
+    string id = 1;
+}
+
+message DeleteFileResponse {}
+
+message ListFilesRequest {
+    string course_id = 1;
+}
+
+message ListFilesResponse {
+    repeated File files = 1;
 }

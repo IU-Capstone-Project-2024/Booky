@@ -10,6 +10,7 @@ type InMemoryStorage struct {
 	courses map[string]*models.Course
 	notes   map[string]*models.Note
 	users   map[string]*models.User
+	files   map[string]*models.File
 }
 
 func NewInMemoryStorage() *InMemoryStorage {
@@ -30,5 +31,6 @@ func NewInMemoryStorage() *InMemoryStorage {
 		courses: make(map[string]*models.Course),
 		notes:   make(map[string]*models.Note),
 		users:   users,
+		files:   make(map[string]*models.File),
 	}
 }
