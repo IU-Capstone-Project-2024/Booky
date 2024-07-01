@@ -30,6 +30,23 @@ func BindNote(noteData *pb.CreateNoteData) (*Note, error) {
 	}, nil
 }
 
+func (n *Note) BindUpdateNote(grpcData *pb.CreateNoteData) error {
+	if grpcData.Title != "" {
+		n.Title = grpcData.Title
+	}
+	if grpcData.Body != "" {
+		n.Body = grpcData.Body
+	}
+	if grpcData.CourseId != "" {
+		n.CourseID = grpcData.CourseId
+	}
+	if grpcData.UserId != "" {
+		n.Publisher.ID = grpcData.UserId
+	}
+	return nil
+
+}
+
 func BindNoteToGRPC(note *Note) (*pb.Note, error) {
 	if note == nil {
 		return nil, fmt.Errorf("note is nil")

@@ -12,11 +12,20 @@ import (
 )
 
 func (s *Server) UpdateNote(ctx context.Context, req *pb.UpdateNoteRequest) (*pb.UpdateNoteResponse, error) {
-	note, err := models.BindNote(req.GetData())
+	if req.Id == "" {
+		return nil, status.Errorf(codes.InvalidArgument, "UpdateNote: note id is required")
+	}
+
+	note, err := s.Storage.GetNote(req.Id)
 	if err != nil {
 		if errors.Is(err, storage.ErrNotFound) {
 			return nil, status.Errorf(codes.NotFound, "UpdateNote: note not found")
 		}
+		return nil, status.Errorf(codes.Internal, "UpdateNote: could not get note: %v", err)
+	}
+
+	err = note.BindUpdateNote(req.GetData())
+	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "UpdateNote: could not bind note: %v", err)
 	}
 

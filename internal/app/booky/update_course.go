@@ -12,7 +12,19 @@ import (
 )
 
 func (s *Server) UpdateCourse(ctx context.Context, req *pb.UpdateCourseRequest) (*pb.UpdateCourseResponse, error) {
-	course, err := models.BindCourse(req.GetData())
+	if req.Id == "" {
+		return nil, status.Errorf(codes.InvalidArgument, "UpdateCourse: course id is required")
+	}
+
+	course, err := s.Storage.GetCourse(req.Id)
+	if err != nil {
+		if errors.Is(err, storage.ErrNotFound) {
+			return nil, status.Errorf(codes.NotFound, "UpdateCourse: course not found")
+		}
+		return nil, status.Errorf(codes.Internal, "UpdateCourse: could not get course: %v", err)
+	}
+
+	err = course.BindUpdateCourse(req.GetData())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "UpdateCourse: could not bind course: %v", err)
 	}

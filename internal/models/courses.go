@@ -28,6 +28,25 @@ func BindCourse(courseData *pb.CreateCourseData) (*Course, error) {
 	}, nil
 }
 
+func (c *Course) BindUpdateCourse(grpcData *pb.CreateCourseData) error {
+	if grpcData.Description != nil {
+		c.Description = grpcData.Description
+	}
+	if grpcData.Title != "" {
+		c.Title = grpcData.Title
+	}
+	if grpcData.Tracks != nil {
+		c.Tracks = grpcData.Tracks
+	}
+	if grpcData.Semester != pb.Semester_SEMESTER_UNKNOWN {
+		c.Semester = grpcData.Semester
+	}
+	if grpcData.Year != 0 {
+		c.Year = int(grpcData.Year)
+	}
+	return nil
+}
+
 func BindCourseToGRPC(course *Course) (*pb.Course, error) {
 	if course == nil {
 		return nil, fmt.Errorf("course is nil")

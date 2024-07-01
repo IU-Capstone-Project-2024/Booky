@@ -113,6 +113,7 @@ message GetCourseResponse {
 
 message UpdateCourseRequest {
     CreateCourseData data = 1;
+    string id = 2;
 }
 
 message UpdateCourseResponse {
@@ -156,6 +157,7 @@ message GetNoteResponse {
 
 message UpdateNoteRequest {
     CreateNoteData data = 1;
+    string id = 2;
 }
 
 message UpdateNoteResponse {
