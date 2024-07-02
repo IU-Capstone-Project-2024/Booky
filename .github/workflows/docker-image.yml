@@ -15,9 +15,9 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag booky:$(date +%s)
+      run: docker build . --file Dockerfile --tag ${{vars.REGESTRY_ADDRESS}}/booky:v1
     - name: Push the Docker image to regestry
       run: |
         docker login ${{vars.REGESTRY_ADDRESS}} -u ${{secrets.KEY_ID}} -p ${{secrets.KEY_SECRET}}
-        docker push booky:$(date +%s)
+        docker push  ${{vars.REGESTRY_ADDRESS}}/booky:v1
       
