@@ -1,0 +1,23 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag booky:$(date +%s)
+    - name: Push the Docker image to regestry
+      run: |
+        docker login $(secrets.REGESTRY_ADDRESS) -u $(secrets.KEY_ID) -p $(secretes.KEY_SECRET)
+        docker push $(secrets.REGESTRY_ADDRESS)/booky:$(date +%s)
+      
