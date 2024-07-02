@@ -19,5 +19,5 @@ jobs:
     - name: Push the Docker image to regestry
       run: |
         docker login ${{vars.REGESTRY_ADDRESS}} -u ${{secrets.KEY_ID}} -p ${{secrets.KEY_SECRET}}
-        docker push ${{secrets.REGESTRY_ADDRESS}}/booky:$(date +%s)
+        docker push ${{vars.REGESTRY_ADDRESS}}/booky:$(date +%s)
       
