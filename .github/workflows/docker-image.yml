@@ -36,5 +36,5 @@ jobs:
         username: ${{ secrets.SSH_USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         password: ${{ secrets.SSH_PASSWORD }}
-        script: ls
+        script: /home/user1/projects/booky/deploy.sh
       
