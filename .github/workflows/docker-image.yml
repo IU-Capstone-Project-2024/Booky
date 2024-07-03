@@ -22,7 +22,7 @@ jobs:
       uses: docker/build-push-action@v4
       with:
         push: true
-        tags: ${{vars.REGESTRY_ADDRESS}}/booky:${{ github.sha }}
+        tags: ${{vars.REGESTRY_ADDRESS}}/booky:latest
         file: ./Dockerfile
         context: ./
       
