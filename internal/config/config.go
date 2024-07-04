@@ -2,17 +2,25 @@ package config
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"github.com/joho/godotenv"
-	"gopkg.in/yaml.v2"
 )
 
+type ServerConfig struct {
+	Ip   string
+	Port string
+}
+
+type GptConfig struct {
+	Token                 string
+	NoteImprovementPrompt string
+}
+
 type Config struct {
-	AppEnv string `yaml:"app_env" env:"APP_ENV"`
-	Ip     string `yaml:"ip" env:"IP"`
-	Port   string `yaml:"port" env:"PORT"`
+	AppEnv string
+	Server ServerConfig
+	Gpt    GptConfig
 }
 
 func LoadConfig() (*Config, error) {
@@ -23,18 +31,14 @@ func LoadConfig() (*Config, error) {
 
 	config := &Config{
 		AppEnv: getEnv("APP_ENV", "production"),
-		Ip:     getEnv("IP", "127.0.0.1"),
-		Port:   getEnv("PORT", "8080"),
-	}
-
-	yamlFile, err := ioutil.ReadFile("config/config.yaml")
-	if err != nil {
-		return nil, err
-	}
-
-	err = yaml.Unmarshal(yamlFile, config)
-	if err != nil {
-		return nil, err
+		Server: ServerConfig{
+			Ip:   getEnv("BOOKY_API_IP", "0.0.0.0"),
+			Port: getEnv("BOOKY_API_PORT", "4000"),
+		},
+		Gpt: GptConfig{
+			Token:                 getEnv("BOOKY_GPT_TOKEN", ""),
+			NoteImprovementPrompt: getEnv("BOOKY_NOTE_IMPROVEMENT_PROMPT", ""),
+		},
 	}
 
 	return config, nil

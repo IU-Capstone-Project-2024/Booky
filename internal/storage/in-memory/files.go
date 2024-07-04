@@ -5,11 +5,12 @@ import (
 	"booky-back/internal/storage"
 	"fmt"
 
+	"github.com/google/uuid"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func (s *InMemoryStorage) CreateFile(file *models.File) (*models.File, error) {
-	file.ID = fmt.Sprint(len(s.files) + 1)
+	file.ID = uuid.New().String()
 	file.CreatedAt = timestamppb.Now()
 
 	s.files[file.ID] = file

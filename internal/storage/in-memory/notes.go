@@ -5,11 +5,12 @@ import (
 	"booky-back/internal/storage"
 	"fmt"
 
+	"github.com/google/uuid"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func (s *InMemoryStorage) CreateNote(note *models.Note) (*models.Note, error) {
-	note.ID = fmt.Sprint(len(s.notes) + 1)
+	note.ID = uuid.New().String()
 	note.CreatedAt = timestamppb.Now()
 
 	s.notes[note.ID] = note

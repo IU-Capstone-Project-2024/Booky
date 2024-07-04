@@ -23,12 +23,12 @@ type Application struct {
 func NewApp(config *config.Config) *Application {
 	return &Application{
 		Config: config,
-		Server: booky.NewServer(),
+		Server: booky.NewServer(config),
 	}
 }
 
 func (app *Application) Run() error {
-	lis, err := net.Listen("tcp", fmt.Sprintf("%s:%s", app.Config.Ip, app.Config.Port))
+	lis, err := net.Listen("tcp", fmt.Sprintf("%s:%s", app.Config.Server.Ip, app.Config.Server.Port))
 	if err != nil {
 		logger.Fatal(err)
 	}
@@ -40,8 +40,7 @@ func (app *Application) Run() error {
 		),
 	)
 
-	server := booky.NewServer()
-	pb.RegisterBookyServiceServer(grpcServer, server)
+	pb.RegisterBookyServiceServer(grpcServer, app.Server)
 
 	done := make(chan bool)
 
@@ -63,7 +62,7 @@ func (app *Application) Run() error {
 
 	go func() {
 		logger.InfoKV("starting server",
-			"address", fmt.Sprintf("%s:%s", app.Config.Ip, app.Config.Port),
+			"address", fmt.Sprintf("%s:%s", app.Config.Server.Ip, app.Config.Server.Port),
 		)
 
 		err = grpcServer.Serve(lis)

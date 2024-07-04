@@ -4,10 +4,12 @@ import (
 	"booky-back/internal/models"
 	"booky-back/internal/storage"
 	"fmt"
+
+	"github.com/google/uuid"
 )
 
 func (s *InMemoryStorage) CreateCourse(course *models.Course) (*models.Course, error) {
-	course.ID = fmt.Sprint(len(s.courses) + 1)
+	course.ID = uuid.New().String()
 	s.courses[course.ID] = course
 	return course, nil
 }

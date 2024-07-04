@@ -6,4 +6,6 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "4000:4000"
+      - "${BOOKY_API_PORT}:${BOOKY_API_PORT}"
+    env_file:
+      - .env

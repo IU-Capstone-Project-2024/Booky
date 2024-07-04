@@ -35,6 +35,7 @@ type BookyServiceClient interface {
 	UpdateNote(ctx context.Context, in *UpdateNoteRequest, opts ...grpc.CallOption) (*UpdateNoteResponse, error)
 	DeleteNote(ctx context.Context, in *DeleteNoteRequest, opts ...grpc.CallOption) (*DeleteNoteResponse, error)
 	ListNotes(ctx context.Context, in *ListNotesRequest, opts ...grpc.CallOption) (*ListNotesResponse, error)
+	GetImprovedNote(ctx context.Context, in *GetImprovedNoteRequest, opts ...grpc.CallOption) (*GetImprovedNoteResponse, error)
 	// Files
 	CreateFile(ctx context.Context, in *CreateFileRequest, opts ...grpc.CallOption) (*CreateFileResponse, error)
 	GetFile(ctx context.Context, in *GetFileRequest, opts ...grpc.CallOption) (*GetFileResponse, error)
@@ -149,6 +150,15 @@ func (c *bookyServiceClient) ListNotes(ctx context.Context, in *ListNotesRequest
 	return out, nil
 }
 
+func (c *bookyServiceClient) GetImprovedNote(ctx context.Context, in *GetImprovedNoteRequest, opts ...grpc.CallOption) (*GetImprovedNoteResponse, error) {
+	out := new(GetImprovedNoteResponse)
+	err := c.cc.Invoke(ctx, "/booky.BookyService/GetImprovedNote", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *bookyServiceClient) CreateFile(ctx context.Context, in *CreateFileRequest, opts ...grpc.CallOption) (*CreateFileResponse, error) {
 	out := new(CreateFileResponse)
 	err := c.cc.Invoke(ctx, "/booky.BookyService/CreateFile", in, out, opts...)
@@ -202,6 +212,7 @@ type BookyServiceServer interface {
 	UpdateNote(context.Context, *UpdateNoteRequest) (*UpdateNoteResponse, error)
 	DeleteNote(context.Context, *DeleteNoteRequest) (*DeleteNoteResponse, error)
 	ListNotes(context.Context, *ListNotesRequest) (*ListNotesResponse, error)
+	GetImprovedNote(context.Context, *GetImprovedNoteRequest) (*GetImprovedNoteResponse, error)
 	// Files
 	CreateFile(context.Context, *CreateFileRequest) (*CreateFileResponse, error)
 	GetFile(context.Context, *GetFileRequest) (*GetFileResponse, error)
@@ -246,6 +257,9 @@ func (UnimplementedBookyServiceServer) DeleteNote(context.Context, *DeleteNoteRe
 }
 func (UnimplementedBookyServiceServer) ListNotes(context.Context, *ListNotesRequest) (*ListNotesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListNotes not implemented")
+}
+func (UnimplementedBookyServiceServer) GetImprovedNote(context.Context, *GetImprovedNoteRequest) (*GetImprovedNoteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetImprovedNote not implemented")
 }
 func (UnimplementedBookyServiceServer) CreateFile(context.Context, *CreateFileRequest) (*CreateFileResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateFile not implemented")
@@ -470,6 +484,24 @@ func _BookyService_ListNotes_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _BookyService_GetImprovedNote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetImprovedNoteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BookyServiceServer).GetImprovedNote(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/booky.BookyService/GetImprovedNote",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BookyServiceServer).GetImprovedNote(ctx, req.(*GetImprovedNoteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _BookyService_CreateFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateFileRequest)
 	if err := dec(in); err != nil {
@@ -592,6 +624,10 @@ var BookyService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListNotes",
 			Handler:    _BookyService_ListNotes_Handler,
+		},
+		{
+			MethodName: "GetImprovedNote",
+			Handler:    _BookyService_GetImprovedNote_Handler,
 		},
 		{
 			MethodName: "CreateFile",

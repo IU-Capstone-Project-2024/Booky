@@ -23,6 +23,7 @@ service BookyService {
     rpc UpdateNote(UpdateNoteRequest) returns (UpdateNoteResponse);
     rpc DeleteNote(DeleteNoteRequest) returns (DeleteNoteResponse);
     rpc ListNotes(ListNotesRequest) returns (ListNotesResponse);
+    rpc GetImprovedNote(GetImprovedNoteRequest) returns (GetImprovedNoteResponse);
 
     // Files
     rpc CreateFile (CreateFileRequest) returns (CreateFileResponse);
@@ -177,6 +178,16 @@ message ListNotesRequest {
 message ListNotesResponse {
     repeated Note notes = 1;
 }
+
+message GetImprovedNoteRequest {
+    string body = 1;
+}
+
+message GetImprovedNoteResponse {
+    string body = 1;
+    string improved_body = 2;
+}
+
 
 message File {
     string id = 1;
