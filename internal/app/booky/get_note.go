@@ -4,6 +4,7 @@ import (
 	pb "booky-back/api/booky"
 	"booky-back/internal/models"
 	"booky-back/internal/storage"
+	"booky-back/internal/validator"
 	"context"
 	"errors"
 
@@ -12,7 +13,15 @@ import (
 )
 
 func (s *Server) GetNote(ctx context.Context, req *pb.GetNoteRequest) (*pb.GetNoteResponse, error) {
-	note, err := s.Storage.GetNote(req.GetId())
+	id := req.GetId()
+	v := validator.New()
+	if details, err := v.ValidateID(id); err != nil {
+		return nil, status.Error(codes.InvalidArgument, "GetCourse: validation error: invalid id")
+	} else if len(details) > 0 {
+		return nil, status.Errorf(codes.InvalidArgument, "GetCourse: validation error: %v", details)
+	}
+
+	note, err := s.Storage.GetNote(id)
 	if err != nil {
 		if errors.Is(err, storage.ErrNotFound) {
 			return nil, status.Errorf(codes.NotFound, "GetNote: note not found")

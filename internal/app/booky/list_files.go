@@ -3,6 +3,7 @@ package booky
 import (
 	pb "booky-back/api/booky"
 	"booky-back/internal/models"
+	"booky-back/internal/validator"
 	"context"
 
 	"google.golang.org/grpc/codes"
@@ -10,7 +11,15 @@ import (
 )
 
 func (s *Server) ListFiles(ctx context.Context, req *pb.ListFilesRequest) (*pb.ListFilesResponse, error) {
-	files, err := s.Storage.ListFiles(req.GetCourseId())
+	courseID := req.GetCourseId()
+	v := validator.New()
+	if details, err := v.ValidateID(courseID); err != nil {
+		return nil, status.Error(codes.InvalidArgument, "GetCourse: validation error: invalid courseID")
+	} else if len(details) > 0 {
+		return nil, status.Errorf(codes.InvalidArgument, "GetCourse: validation error: %v", details)
+	}
+
+	files, err := s.Storage.ListFiles(courseID)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "ListFiles: could not list files: %v", err)
 	}

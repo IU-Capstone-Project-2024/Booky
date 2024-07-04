@@ -3,6 +3,7 @@ package booky
 import (
 	pb "booky-back/api/booky"
 	"booky-back/internal/models"
+	"booky-back/internal/validator"
 	"context"
 
 	"google.golang.org/grpc/codes"
@@ -15,8 +16,11 @@ func (s *Server) CreateCourse(ctx context.Context, req *pb.CreateCourseRequest) 
 		return nil, status.Errorf(codes.InvalidArgument, "CreateCourse: could not bind course data: %v", err)
 	}
 
-	if !courseData.Validate() {
+	v := validator.New()
+	if details, err := v.ValidateCourse(courseData); err != nil {
 		return nil, status.Error(codes.InvalidArgument, "CreateCourse: validation error: invalid course data")
+	} else if len(details) > 0 {
+		return nil, status.Errorf(codes.InvalidArgument, "CreateCourse: validation error: %v", details)
 	}
 
 	course, err := s.Storage.CreateCourse(courseData)

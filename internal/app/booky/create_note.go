@@ -3,6 +3,7 @@ package booky
 import (
 	pb "booky-back/api/booky"
 	"booky-back/internal/models"
+	"booky-back/internal/validator"
 	"context"
 
 	"google.golang.org/grpc/codes"
@@ -13,6 +14,13 @@ func (s *Server) CreateNote(ctx context.Context, req *pb.CreateNoteRequest) (*pb
 	note, err := models.BindNote(req.GetData())
 	if err != nil {
 		return nil, status.Errorf(codes.InvalidArgument, "CreateNote: could not bind note: %v", err)
+	}
+
+	v := validator.New()
+	if details, err := v.ValidateNote(note); err != nil {
+		return nil, status.Error(codes.InvalidArgument, "CreateNote: validation error: invalid note data")
+	} else if len(details) > 0 {
+		return nil, status.Errorf(codes.InvalidArgument, "CreateNote: validation error: %v", details)
 	}
 
 	user, err := s.Storage.GetUser(note.Publisher.ID)

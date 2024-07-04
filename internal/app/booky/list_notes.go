@@ -3,6 +3,7 @@ package booky
 import (
 	pb "booky-back/api/booky"
 	"booky-back/internal/models"
+	"booky-back/internal/validator"
 	"context"
 
 	"google.golang.org/grpc/codes"
@@ -10,7 +11,15 @@ import (
 )
 
 func (s *Server) ListNotes(ctx context.Context, req *pb.ListNotesRequest) (*pb.ListNotesResponse, error) {
-	notes, err := s.Storage.ListNotes(req.GetCourseId())
+	courseID := req.GetCourseId()
+	v := validator.New()
+	if details, err := v.ValidateID(courseID); err != nil {
+		return nil, status.Error(codes.InvalidArgument, "GetCourse: validation error: invalid courseID")
+	} else if len(details) > 0 {
+		return nil, status.Errorf(codes.InvalidArgument, "GetCourse: validation error: %v", details)
+	}
+
+	notes, err := s.Storage.ListNotes(courseID)
 	if err != nil {
 		return nil, status.Errorf(codes.Internal, "ListNotes: could not list notes: %v", err)
 	}

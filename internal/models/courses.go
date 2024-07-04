@@ -61,7 +61,3 @@ func BindCourseToGRPC(course *Course) (*pb.Course, error) {
 		Year:        int32(course.Year),
 	}, nil
 }
-
-func (c *Course) Validate() bool {
-	return c.Title != ""
-}
