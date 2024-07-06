@@ -1,6 +1,7 @@
 package config
 
 import (
+	"flag"
 	"fmt"
 	"os"
 
@@ -12,15 +13,23 @@ type ServerConfig struct {
 	Port string
 }
 
+type StorageConfig struct {
+	CourseStorage string
+	NoteStorage   string
+	FileStorage   string
+	UserStorage   string
+}
+
 type GptConfig struct {
 	Token                 string
 	NoteImprovementPrompt string
 }
 
 type Config struct {
-	AppEnv string
-	Server ServerConfig
-	Gpt    GptConfig
+	AppEnv  string
+	Server  ServerConfig
+	Storage StorageConfig
+	Gpt     GptConfig
 }
 
 func LoadConfig() (*Config, error) {
@@ -29,11 +38,24 @@ func LoadConfig() (*Config, error) {
 		return nil, fmt.Errorf("error loading .env file: %v", err)
 	}
 
+	courseStorage := flag.String("courseStorage", "in-memory", "Course storage option (in-memory, PostgreSQL)")
+	noteStorage := flag.String("noteStorage", "in-memory", "Note storage option (in-memory, PostgreSQL)")
+	fileStorage := flag.String("fileStorage", "in-memory", "File storage option (in-memory, PostgreSQL, S3)")
+	userStorage := flag.String("userStorage", "in-memory", "User storage option (in-memory, PostgreSQL)")
+
+	flag.Parse()
+
 	config := &Config{
 		AppEnv: getEnv("APP_ENV", "production"),
 		Server: ServerConfig{
 			Ip:   getEnv("BOOKY_API_IP", "0.0.0.0"),
 			Port: getEnv("BOOKY_API_PORT", "4000"),
+		},
+		Storage: StorageConfig{
+			CourseStorage: *courseStorage,
+			NoteStorage:   *noteStorage,
+			FileStorage:   *fileStorage,
+			UserStorage:   *userStorage,
 		},
 		Gpt: GptConfig{
 			Token:                 getEnv("BOOKY_GPT_TOKEN", ""),

@@ -1,5 +1,9 @@
 package gpt
 
-type GPT interface {
-	GetImprovedNote(note string) (string, error)
+type GPT struct {
+	AiModel AiModel
+}
+
+func (g *GPT) GetImprovedNote(note string) (string, error) {
+	return g.AiModel.GetImprovedNote(note)
 }
