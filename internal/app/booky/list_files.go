@@ -26,6 +26,13 @@ func (s *Server) ListFiles(ctx context.Context, req *pb.ListFilesRequest) (*pb.L
 
 	grpcFiles := make([]*pb.File, 0, len(files))
 	for _, file := range files {
+		user, err := s.Storage.GetUser(file.Publisher.ID)
+		if err != nil {
+			return nil, status.Errorf(codes.NotFound, "CreateFile: could not get user: %v", err)
+		}
+
+		file.Publisher = *user
+
 		grpcFile, err := models.BindFileToGRPC(file)
 		if err != nil {
 			return nil, status.Errorf(codes.Internal, "ListFiles: could not bind file to grpc: %v", err)

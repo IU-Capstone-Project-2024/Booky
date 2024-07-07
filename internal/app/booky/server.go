@@ -6,6 +6,7 @@ import (
 	"booky-back/internal/gpt"
 	"booky-back/internal/storage"
 	inmemory "booky-back/internal/storage/in-memory"
+	"booky-back/internal/storage/s3"
 )
 
 type Server struct {
@@ -38,6 +39,8 @@ func getStorage(config *config.StorageConfig) *storage.Storage {
 
 	var fileStorage storage.FileModel
 	switch config.FileStorage {
+	case "S3":
+		fileStorage = s3.NewFileStorage(config)
 	default:
 		fileStorage = inmemory.NewFileStorage()
 	}

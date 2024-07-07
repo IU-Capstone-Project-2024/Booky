@@ -24,6 +24,13 @@ func (s *Server) GetFile(ctx context.Context, req *pb.GetFileRequest) (*pb.GetFi
 		return nil, err
 	}
 
+	user, err := s.Storage.GetUser(file.Publisher.ID)
+	if err != nil {
+		return nil, status.Errorf(codes.NotFound, "CreateFile: could not get user: %v", err)
+	}
+
+	file.Publisher = *user
+
 	grpcFile, err := models.BindFileToGRPC(file)
 	if err != nil {
 		return nil, err

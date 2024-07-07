@@ -6,7 +6,6 @@ import (
 	"booky-back/internal/storage"
 	"fmt"
 
-	"github.com/google/uuid"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
@@ -29,7 +28,7 @@ func NewUserStorage() *UserStorage {
 
 func getTestUsers() []*models.User {
 	admin := &models.User{
-		ID:    uuid.New().String(),
+		ID:    "93d47db0-f1e2-401a-bc67-e564e3f26107",
 		Name:  "Admin",
 		Email: "admin@example.com",
 		Password: models.Password{
@@ -39,7 +38,7 @@ func getTestUsers() []*models.User {
 	}
 
 	nikita := &models.User{
-		ID:    uuid.New().String(),
+		ID:    "7cc3f064-d595-4676-904a-b3c31a3e3038",
 		Name:  "Nikita Shlyakhtin",
 		Email: "nikita@example.com",
 		Password: models.Password{
@@ -49,7 +48,7 @@ func getTestUsers() []*models.User {
 	}
 
 	adel := &models.User{
-		ID:    uuid.New().String(),
+		ID:    "1585483f-9e78-4aad-a626-bf160e1239ac",
 		Name:  "Adel Shagaliev",
 		Email: "adel@example.com",
 		Password: models.Password{
@@ -59,7 +58,7 @@ func getTestUsers() []*models.User {
 	}
 
 	mikhail := &models.User{
-		ID:    "4",
+		ID:    "1de67a82-24fc-4ea3-8618-c7d42bffc71d",
 		Name:  "Mikhail Zimin",
 		Email: "mikhail@example.com",
 		Password: models.Password{

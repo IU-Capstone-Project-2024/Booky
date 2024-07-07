@@ -13,11 +13,18 @@ type ServerConfig struct {
 	Port string
 }
 
+type S3Config struct {
+	Endpoint string
+	Bucket   string
+}
+
 type StorageConfig struct {
 	CourseStorage string
 	NoteStorage   string
 	FileStorage   string
 	UserStorage   string
+
+	S3 S3Config
 }
 
 type GptConfig struct {
@@ -56,6 +63,10 @@ func LoadConfig() (*Config, error) {
 			NoteStorage:   *noteStorage,
 			FileStorage:   *fileStorage,
 			UserStorage:   *userStorage,
+			S3: S3Config{
+				Endpoint: getEnv("BOOKY_S3_ENDPOINT", ""),
+				Bucket:   getEnv("BOOKY_S3_BUCKET", ""),
+			},
 		},
 		Gpt: GptConfig{
 			Token:                 getEnv("BOOKY_GPT_TOKEN", ""),

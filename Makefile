@@ -18,7 +18,7 @@ help:
 ## run/api: run the cmd/api application
 .PHONY: run/booky
 run/booky:
-	go run ./cmd/booky
+	go run ./cmd/booky -fileStorage=S3
 
 .PHONY: generate
 generate:
