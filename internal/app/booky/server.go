@@ -4,6 +4,7 @@ import (
 	pb "booky-back/api/booky"
 	"booky-back/internal/config"
 	"booky-back/internal/gpt"
+	yandex "booky-back/internal/gpt/yandex_gpt"
 	"booky-back/internal/storage"
 	inmemory "booky-back/internal/storage/in-memory"
 	"booky-back/internal/storage/s3"
@@ -21,6 +22,7 @@ func NewServer(config *config.Config) *Server {
 	return &Server{
 		Config:  config,
 		Storage: getStorage(&config.Storage),
+		GPT:     &gpt.GPT{AiModel: &yandex.YandexGPT{}},
 	}
 }
 

@@ -9,5 +9,12 @@ import (
 )
 
 func (s *Server) GetImprovedNote(ctx context.Context, req *pb.GetImprovedNoteRequest) (*pb.GetImprovedNoteResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetImprovedNote not implemented")
+	result, err := s.GPT.GetImprovedNote(req.GetBody())
+	if err != nil {
+		return nil, status.Errorf(codes.Internal, "error getting improved note: %v", err)
+	}
+
+	return &pb.GetImprovedNoteResponse{
+		Body:         req.GetBody(),
+		ImprovedBody: result}, nil
 }
