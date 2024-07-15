@@ -22,7 +22,7 @@ func NewServer(config *config.Config) *Server {
 	return &Server{
 		Config:  config,
 		Storage: getStorage(&config.Storage),
-		GPT:     &gpt.GPT{AiModel: &yandex.YandexGPT{}},
+		GPT:     &gpt.GPT{AiModel: yandex.NewYandexGPT(&config.Gpt)},
 	}
 }
 

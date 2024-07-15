@@ -1,14 +1,21 @@
 package yandex
 
 import (
+	"booky-back/internal/config"
 	"booky-back/internal/logger"
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 )
 
 type YandexGPT struct {
+	config *config.GptConfig
+}
+
+func NewYandexGPT(config *config.GptConfig) *YandexGPT {
+	return &YandexGPT{config: config}
 }
 
 type Message struct {
@@ -39,7 +46,7 @@ type Response struct {
 
 func (g *YandexGPT) GetImprovedNote(note string) (string, error) {
 	prompt := map[string]interface{}{
-		"modelUri": "gpt://b1gf6f4qqesojkcpfk9a/yandexgpt-lite",
+		"modelUri": g.config.YandexGPT.ModelUri,
 		"completionOptions": map[string]interface{}{
 			"stream":      false,
 			"temperature": 0.6,
@@ -48,7 +55,7 @@ func (g *YandexGPT) GetImprovedNote(note string) (string, error) {
 		"messages": []map[string]string{
 			{
 				"role": "system",
-				"text": "You are a highly professional text editor specialized in academic content. Your task is to receive a text note related to a university course, analyze its content for grammar, punctuation, and formatting errors, and then improve the text. The improved text should be presented in Markdown format with proper headers, paragraph divisions, and bullet points, to enhance readability and comprehension. Ensure that the content maintains its original intent while enhancing its clarity and structure. Whenever you receive a note for editing, immediately return the improved text formatted in Markdown without any additional dialogue.",
+				"text": g.config.NoteImprovementPrompt,
 			},
 			{
 				"role": "user",
@@ -63,15 +70,14 @@ func (g *YandexGPT) GetImprovedNote(note string) (string, error) {
 		return "", err
 	}
 
-	url := "https://llm.api.cloud.yandex.net/foundationModels/v1/completion"
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
+	req, err := http.NewRequest("POST", g.config.YandexGPT.URL, bytes.NewBuffer(jsonData))
 	if err != nil {
 		logger.Error("Error creating request:", err)
 		return "", err
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Api-Key AQVN1YKRO5y39LFOhy2_izkfD0k2AbKRPTx1l0_c")
+	req.Header.Set("Authorization", fmt.Sprintf("Api-Key %s", g.config.YandexGPT.ApiKey))
 
 	client := &http.Client{}
 	resp, err := client.Do(req)

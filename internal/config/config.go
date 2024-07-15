@@ -28,8 +28,15 @@ type StorageConfig struct {
 }
 
 type GptConfig struct {
-	Token                 string
 	NoteImprovementPrompt string
+
+	YandexGPT YandexGPTConfig
+}
+
+type YandexGPTConfig struct {
+	URL      string
+	ModelUri string
+	ApiKey   string
 }
 
 type Config struct {
@@ -69,8 +76,12 @@ func LoadConfig() (*Config, error) {
 			},
 		},
 		Gpt: GptConfig{
-			Token:                 getEnv("BOOKY_GPT_TOKEN", ""),
 			NoteImprovementPrompt: getEnv("BOOKY_NOTE_IMPROVEMENT_PROMPT", ""),
+			YandexGPT: YandexGPTConfig{
+				URL:      getEnv("YANDEX_GPT_URL", ""),
+				ModelUri: getEnv("YANDEX_GPT_MODEL_URI", ""),
+				ApiKey:   getEnv("YANDEX_GPT_API_KEY", ""),
+			},
 		},
 	}
 
