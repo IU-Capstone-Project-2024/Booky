@@ -8,29 +8,24 @@ import (
 )
 
 type User struct {
-	ID        string               `json:"id"`
-	Name      string               `json:"name"`
-	Email     string               `json:"email"`
-	Password  Password             `json:"password"`
-	CreatedAt *timestamp.Timestamp `json:"created_at"`
+	ID           string               `json:"id"`
+	Name         string               `json:"name"`
+	Email        string               `json:"email"`
+	Password     string               `json:"-"`
+	PasswordHash string               `json:"-"`
+	CreatedAt    *timestamp.Timestamp `json:"created_at"`
+	UpdatedAt    *timestamp.Timestamp `json:"updated_at"`
 }
 
-func BindUser(grpcUser *pb.User) (*User, error) {
-	if grpcUser == nil {
+func BindUser(data *pb.CreateUserData) (*User, error) {
+	if data == nil {
 		return nil, fmt.Errorf("grpc user is nil")
 	}
 
-	password, err := BindPassword(grpcUser.Password)
-	if err != nil {
-		return nil, fmt.Errorf("failed to bind password: %w", err)
-	}
-
 	return &User{
-		ID:        grpcUser.Id,
-		Name:      grpcUser.Name,
-		Email:     grpcUser.Email,
-		Password:  *password,
-		CreatedAt: grpcUser.CreatedAt,
+		Name:     data.Name,
+		Email:    data.Email,
+		Password: data.Password,
 	}, nil
 }
 
@@ -39,23 +34,16 @@ func BindUserToGRPC(user *User) (*pb.User, error) {
 		return nil, fmt.Errorf("user is nil")
 	}
 
-	password, err := BindPasswordToGRPC(&user.Password)
-	if err != nil {
-		return nil, fmt.Errorf("failed to bind password to grpc: %w", err)
-	}
-
 	return &pb.User{
 		Id:        user.ID,
 		Name:      user.Name,
 		Email:     user.Email,
-		Password:  password,
 		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
 	}, nil
 }
 
 func (u *User) Validate() bool {
-	return u.ID != "" &&
-		u.Name != "" &&
-		u.Email != "" &&
-		u.Password.Validate() // Modify this line according to your Password struct
+	return u.Name != "" &&
+		u.Email != ""
 }

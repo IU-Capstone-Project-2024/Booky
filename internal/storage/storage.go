@@ -68,3 +68,19 @@ func (s *Storage) ListFiles(courseID string) ([]*models.File, error) {
 func (s *Storage) GetUser(id string) (*models.User, error) {
 	return s.UserStorage.GetUser(id)
 }
+
+func (s *Storage) CreateUser(user *models.User) (*models.User, error) {
+	return s.UserStorage.CreateUser(user)
+}
+
+func (s *Storage) DeleteUser(id string) error {
+	return s.UserStorage.DeleteUser(id)
+}
+
+func (s *Storage) ListUsers() ([]*models.User, error) {
+	return s.UserStorage.ListUsers()
+}
+
+func (s *Storage) VerifyUser(email, password string) error {
+	return s.UserStorage.VerifyUser(email, password)
+}

@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"booky-back/internal/logger"
+	"booky-back/internal/storage"
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
@@ -54,4 +55,21 @@ func unaryRecoveryInterceptor() grpc.UnaryServerInterceptor {
 	}
 
 	return recovery.UnaryServerInterceptor(opts...)
+}
+
+func unaryAuthInterceptor(storage storage.Storage) grpc.UnaryServerInterceptor {
+	return func(
+		ctx context.Context,
+		req interface{},
+		info *grpc.UnaryServerInfo,
+		handler grpc.UnaryHandler,
+	) (interface{}, error) {
+		if _, ok := noAuthMethods[info.FullMethod]; !ok {
+			_, err := authorize(ctx, storage)
+			if err != nil {
+				return nil, err
+			}
+		}
+		return handler(ctx, req)
+	}
 }

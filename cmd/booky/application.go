@@ -35,6 +35,7 @@ func (app *Application) Run() error {
 
 	grpcServer := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
+			unaryAuthInterceptor(*app.Server.Storage),
 			unaryLoggingInterceptor(),
 			unaryRecoveryInterceptor(),
 		),

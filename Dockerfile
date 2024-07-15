@@ -17,4 +17,4 @@ WORKDIR /root/
 COPY --from=builder /app/bin/booky .
 COPY --from=builder /app/.env .
 
-CMD ./booky
+CMD ./booky -fileStorage=S3

@@ -52,5 +52,5 @@ audit:
 .PHONY: build/booky
 build/booky:
 	@echo 'Building cmd/booky...'
-	go build -o=./bin/booky ./cmd/booky -fileStorage=S3
-	GOOS=linux GOARCH=amd64 go build -o=./bin/linux_amd64/booky ./cmd/booky -fileStorage=S3
+	go build -o=./bin/booky ./cmd/booky
+	GOOS=linux GOARCH=amd64 go build -o=./bin/linux_amd64/booky ./cmd/booky

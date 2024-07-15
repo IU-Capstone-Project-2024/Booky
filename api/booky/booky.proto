@@ -26,10 +26,16 @@ service BookyService {
     rpc GetImprovedNote(GetImprovedNoteRequest) returns (GetImprovedNoteResponse);
 
     // Files
-    rpc CreateFile (CreateFileRequest) returns (CreateFileResponse);
-    rpc GetFile (GetFileRequest) returns (GetFileResponse);
-    rpc DeleteFile (DeleteFileRequest) returns (DeleteFileResponse);
-    rpc ListFiles (ListFilesRequest) returns (ListFilesResponse);
+    rpc CreateFile(CreateFileRequest) returns (CreateFileResponse);
+    rpc GetFile(GetFileRequest) returns (GetFileResponse);
+    rpc DeleteFile(DeleteFileRequest) returns (DeleteFileResponse);
+    rpc ListFiles(ListFilesRequest) returns (ListFilesResponse);
+
+    // Users
+    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse);
+    rpc GetUser(GetUserRequest) returns (GetUserResponse);
+    rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
+    rpc ListUsers(ListUsersRequest) returns (ListUsersResponse);
 }
 
 message HealthCheckRequest {}
@@ -79,13 +85,8 @@ message User {
     string id = 1;
     string name = 2;
     string email = 3;
-    Password password = 4;
-    google.protobuf.Timestamp created_at = 5;
-}
-
-message Password {
-    string password = 1;
-    string password_hash = 2;
+    google.protobuf.Timestamp created_at = 4;
+    google.protobuf.Timestamp updated_at = 5;
 }
 
 message CreateCourseData {
@@ -188,7 +189,6 @@ message GetImprovedNoteResponse {
     string improved_body = 2;
 }
 
-
 message File {
     string id = 1;
     string course_id = 2;
@@ -233,4 +233,38 @@ message ListFilesRequest {
 
 message ListFilesResponse {
     repeated File files = 1;
+}
+
+message CreateUserData {
+    string name = 1;
+    string email = 2;
+    string password = 3;
+}
+
+message CreateUserRequest {
+    CreateUserData data = 1;
+}
+
+message CreateUserResponse {
+    User user = 1;
+}
+
+message GetUserRequest {
+    string id = 1;
+}
+
+message GetUserResponse {
+    User user = 1;
+}
+
+message DeleteUserRequest {
+    string id = 1;
+}
+
+message DeleteUserResponse {}
+
+message ListUsersRequest {}
+
+message ListUsersResponse {
+    repeated User users = 1;
 }

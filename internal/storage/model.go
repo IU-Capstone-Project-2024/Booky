@@ -37,5 +37,9 @@ type FileModel interface {
 
 type UserModel interface {
 	// User CRUD
+	CreateUser(*models.User) (*models.User, error)
 	GetUser(string) (*models.User, error)
+	DeleteUser(string) error
+	ListUsers() ([]*models.User, error)
+	VerifyUser(string, string) error
 }
