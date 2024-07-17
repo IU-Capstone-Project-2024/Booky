@@ -2,7 +2,7 @@ package s3
 
 import (
 	"booky-back/internal/config"
-	"booky-back/internal/logger"
+	"booky-back/internal/pkg/logger"
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"

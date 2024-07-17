@@ -1,8 +1,8 @@
 package inmemory
 
 import (
-	"booky-back/internal/models"
-	"booky-back/internal/storage"
+	"booky-back/internal/pkg/models"
+	"booky-back/internal/pkg/storage"
 	"fmt"
 
 	"github.com/google/uuid"

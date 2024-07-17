@@ -2,7 +2,7 @@ package booky
 
 import (
 	pb "booky-back/api/booky"
-	"booky-back/internal/validator"
+	"booky-back/internal/pkg/validator"
 	"context"
 
 	"google.golang.org/grpc/codes"

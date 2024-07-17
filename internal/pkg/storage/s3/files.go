@@ -2,7 +2,7 @@ package s3
 
 import (
 	"booky-back/internal/config"
-	"booky-back/internal/models"
+	models2 "booky-back/internal/pkg/models"
 	"bytes"
 	"context"
 	"fmt"
@@ -36,7 +36,7 @@ func NewFileStorage(c *config.StorageConfig) *FileStorage {
 	}
 }
 
-func (s *FileStorage) CreateFile(file *models.File) (*models.File, error) {
+func (s *FileStorage) CreateFile(file *models2.File) (*models2.File, error) {
 	file.ID = uuid.New().String()
 	file.CreatedAt = timestamppb.Now()
 
@@ -64,7 +64,7 @@ func (s *FileStorage) CreateFile(file *models.File) (*models.File, error) {
 	return file, nil
 }
 
-func (s *FileStorage) GetFile(id string) (*models.File, error) {
+func (s *FileStorage) GetFile(id string) (*models2.File, error) {
 	input := &s3.GetObjectInput{
 		Bucket: aws.String(s.bucket),
 		Key:    aws.String(id),
@@ -86,12 +86,12 @@ func (s *FileStorage) GetFile(id string) (*models.File, error) {
 		return nil, fmt.Errorf("failed to parse CreatedAt metadata: %w", err)
 	}
 
-	file := &models.File{
+	file := &models2.File{
 		ID:        id,
 		CourseID:  resp.Metadata[metaCourseID],
 		Content:   fileData,
 		Filename:  resp.Metadata[metaFilename],
-		Publisher: models.User{ID: resp.Metadata[metaPublisherID]},
+		Publisher: models2.User{ID: resp.Metadata[metaPublisherID]},
 		CreatedAt: timestamppb.New(createdAt),
 	}
 
@@ -112,7 +112,7 @@ func (s *FileStorage) DeleteFile(id string) error {
 	return nil
 }
 
-func (s *FileStorage) ListFiles(courseID string) ([]*models.File, error) {
+func (s *FileStorage) ListFiles(courseID string) ([]*models2.File, error) {
 	input := &s3.ListObjectsV2Input{
 		Bucket: aws.String(s.bucket),
 	}
@@ -122,7 +122,7 @@ func (s *FileStorage) ListFiles(courseID string) ([]*models.File, error) {
 		return nil, fmt.Errorf("failed to list files in S3: %w", err)
 	}
 
-	var files []*models.File
+	var files []*models2.File
 	for _, item := range resp.Contents {
 		headInput := &s3.HeadObjectInput{
 			Bucket: aws.String(s.bucket),
@@ -140,11 +140,11 @@ func (s *FileStorage) ListFiles(courseID string) ([]*models.File, error) {
 				return nil, fmt.Errorf("failed to parse CreatedAt metadata: %w", err)
 			}
 
-			file := &models.File{
+			file := &models2.File{
 				ID:        *item.Key,
 				CourseID:  headResp.Metadata[metaCourseID],
 				Filename:  headResp.Metadata[metaFilename],
-				Publisher: models.User{ID: headResp.Metadata[metaPublisherID]},
+				Publisher: models2.User{ID: headResp.Metadata[metaPublisherID]},
 				CreatedAt: timestamppb.New(createdAt),
 			}
 			files = append(files, file)

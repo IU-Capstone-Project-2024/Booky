@@ -1,43 +1,30 @@
 package main
 
 import (
+	"booky-back/internal/pkg/auth"
+	"booky-back/internal/pkg/auth/basic_auth"
 	"context"
-
-	"booky-back/internal/storage"
+	"google.golang.org/grpc"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 )
 
-// List of methods that do not require authentication
-var noAuthMethods = map[string]bool{
-	"/booky.BookyService/HealthCheck": true,
-	"/booky.BookyService/CreateUser":  true,
-}
+func (app *Application) authorize(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error) {
+	if isRequired := auth.IsAuthRequired(ctx, info.FullMethod); !isRequired {
+		return ctx, nil
+	}
 
-func authorize(ctx context.Context, storage storage.Storage) (context.Context, error) {
-	md, ok := metadata.FromIncomingContext(ctx)
+	meta, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		return nil, status.Error(codes.Unauthenticated, "missing metadata")
 	}
 
-	var email, password string
-	if val, ok := md["email"]; ok {
-		email = val[0]
-	} else {
-		return nil, status.Error(codes.Unauthenticated, "missing email")
-	}
-
-	if val, ok := md["password"]; ok {
-		password = val[0]
-	} else {
-		return nil, status.Error(codes.Unauthenticated, "missing password")
-	}
-
-	err := storage.VerifyUser(email, password)
+	basicAuth := basic_auth.New(app.Server.Storage)
+	ctx, err := basicAuth.Authorize(ctx, meta)
 	if err != nil {
-		return nil, status.Error(codes.Unauthenticated, "invalid credentials")
+		return nil, status.Error(codes.Unauthenticated, err.Error())
 	}
 
 	return ctx, nil

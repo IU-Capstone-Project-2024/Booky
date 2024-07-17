@@ -2,7 +2,7 @@ package main
 
 import (
 	"booky-back/internal/config"
-	"booky-back/internal/logger"
+	"booky-back/internal/pkg/logger"
 )
 
 func main() {

@@ -2,7 +2,7 @@ package yandex
 
 import (
 	"booky-back/internal/config"
-	"booky-back/internal/logger"
+	"booky-back/internal/pkg/logger"
 	"bytes"
 	"encoding/json"
 	"fmt"

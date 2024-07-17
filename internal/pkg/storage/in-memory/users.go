@@ -1,9 +1,9 @@
 package inmemory
 
 import (
-	"booky-back/internal/logger"
-	"booky-back/internal/models"
-	"booky-back/internal/storage"
+	"booky-back/internal/pkg/logger"
+	"booky-back/internal/pkg/models"
+	"booky-back/internal/pkg/storage"
 	"fmt"
 
 	"github.com/google/uuid"
@@ -115,17 +115,12 @@ func (s *UserStorage) ListUsers() ([]*models.User, error) {
 	return users, nil
 }
 
-func (s *UserStorage) VerifyUser(email, password string) error {
+func (s *UserStorage) FindUserByEmail(email string) (*models.User, error) {
 	for _, user := range s.users {
 		if user.Email == email {
-			err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password))
-			if err != nil {
-				return fmt.Errorf("could not verify user: %w", err)
-			}
-
-			return nil
+			return user, nil
 		}
 	}
 
-	return fmt.Errorf("user with email %s was not found: %w", email, storage.ErrNotFound)
+	return nil, fmt.Errorf("user with email %s was not found: %w", email, storage.ErrNotFound)
 }

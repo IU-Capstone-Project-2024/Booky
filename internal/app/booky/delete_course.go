@@ -2,8 +2,8 @@ package booky
 
 import (
 	pb "booky-back/api/booky"
-	"booky-back/internal/storage"
-	"booky-back/internal/validator"
+	"booky-back/internal/pkg/storage"
+	"booky-back/internal/pkg/validator"
 	"context"
 	"errors"
 

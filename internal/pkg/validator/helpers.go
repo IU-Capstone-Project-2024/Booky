@@ -1,13 +1,13 @@
 package validator
 
 import (
-	"booky-back/internal/models"
+	models2 "booky-back/internal/pkg/models"
 
 	"github.com/google/uuid"
 	"github.com/samber/lo"
 )
 
-func (v *Validator) ValidateCourse(c *models.Course) (ValidationErrors, error) {
+func (v *Validator) ValidateCourse(c *models2.Course) (ValidationErrors, error) {
 	// Title
 	v.Check(len(c.Title) != 0, "title", "must be provided")
 
@@ -26,7 +26,7 @@ func (v *Validator) ValidateCourse(c *models.Course) (ValidationErrors, error) {
 	return v.Errors, nil
 }
 
-func (v *Validator) ValidateNote(c *models.Note) (ValidationErrors, error) {
+func (v *Validator) ValidateNote(c *models2.Note) (ValidationErrors, error) {
 	// Title
 	v.Check(len(c.Title) != 0, "title", "must be provided")
 
@@ -42,7 +42,7 @@ func (v *Validator) ValidateNote(c *models.Note) (ValidationErrors, error) {
 	return v.Errors, nil
 }
 
-func (v *Validator) ValidateFile(f *models.File) (ValidationErrors, error) {
+func (v *Validator) ValidateFile(f *models2.File) (ValidationErrors, error) {
 	// Filename
 	v.Check(len(f.Filename) != 0, "filename", "must be provided")
 

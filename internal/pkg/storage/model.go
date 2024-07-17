@@ -1,6 +1,8 @@
 package storage
 
-import "booky-back/internal/models"
+import (
+	models "booky-back/internal/pkg/models"
+)
 
 type DataModel interface {
 	CourseModel
@@ -41,5 +43,5 @@ type UserModel interface {
 	GetUser(string) (*models.User, error)
 	DeleteUser(string) error
 	ListUsers() ([]*models.User, error)
-	VerifyUser(string, string) error
+	FindUserByEmail(string) (*models.User, error)
 }

@@ -3,7 +3,7 @@ package main
 import (
 	"booky-back/internal/app/booky"
 	"booky-back/internal/config"
-	"booky-back/internal/logger"
+	"booky-back/internal/pkg/logger"
 	"fmt"
 	"net"
 	"os"
@@ -35,7 +35,7 @@ func (app *Application) Run() error {
 
 	grpcServer := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
-			unaryAuthInterceptor(*app.Server.Storage),
+			app.unaryAuthInterceptor(),
 			unaryLoggingInterceptor(),
 			unaryRecoveryInterceptor(),
 		),

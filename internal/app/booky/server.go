@@ -3,16 +3,16 @@ package booky
 import (
 	pb "booky-back/api/booky"
 	"booky-back/internal/config"
-	"booky-back/internal/gpt"
-	yandex "booky-back/internal/gpt/yandex_gpt"
-	"booky-back/internal/storage"
-	inmemory "booky-back/internal/storage/in-memory"
-	"booky-back/internal/storage/s3"
+	"booky-back/internal/pkg/gpt"
+	"booky-back/internal/pkg/gpt/yandex_gpt"
+	storage2 "booky-back/internal/pkg/storage"
+	inmemory2 "booky-back/internal/pkg/storage/in-memory"
+	"booky-back/internal/pkg/storage/s3"
 )
 
 type Server struct {
 	Config  *config.Config
-	Storage *storage.Storage
+	Storage *storage2.Storage
 	GPT     *gpt.GPT
 
 	pb.UnimplementedBookyServiceServer
@@ -26,34 +26,34 @@ func NewServer(config *config.Config) *Server {
 	}
 }
 
-func getStorage(config *config.StorageConfig) *storage.Storage {
-	var courseStorage storage.CourseModel
+func getStorage(config *config.StorageConfig) *storage2.Storage {
+	var courseStorage storage2.CourseModel
 	switch config.CourseStorage {
 	default:
-		courseStorage = inmemory.NewCourseStorage()
+		courseStorage = inmemory2.NewCourseStorage()
 	}
 
-	var noteStorage storage.NoteModel
+	var noteStorage storage2.NoteModel
 	switch config.NoteStorage {
 	default:
-		noteStorage = inmemory.NewNoteStorage()
+		noteStorage = inmemory2.NewNoteStorage()
 	}
 
-	var fileStorage storage.FileModel
+	var fileStorage storage2.FileModel
 	switch config.FileStorage {
 	case "S3":
 		fileStorage = s3.NewFileStorage(config)
 	default:
-		fileStorage = inmemory.NewFileStorage()
+		fileStorage = inmemory2.NewFileStorage()
 	}
 
-	var userStorage storage.UserModel
+	var userStorage storage2.UserModel
 	switch config.UserStorage {
 	default:
-		userStorage = inmemory.NewUserStorage()
+		userStorage = inmemory2.NewUserStorage()
 	}
 
-	return &storage.Storage{
+	return &storage2.Storage{
 		CourseStorage: courseStorage,
 		NoteStorage:   noteStorage,
 		FileStorage:   fileStorage,

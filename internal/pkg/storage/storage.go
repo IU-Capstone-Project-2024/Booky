@@ -1,6 +1,8 @@
 package storage
 
-import "booky-back/internal/models"
+import (
+	models "booky-back/internal/pkg/models"
+)
 
 type Storage struct {
 	CourseStorage CourseModel
@@ -81,6 +83,6 @@ func (s *Storage) ListUsers() ([]*models.User, error) {
 	return s.UserStorage.ListUsers()
 }
 
-func (s *Storage) VerifyUser(email, password string) error {
-	return s.UserStorage.VerifyUser(email, password)
+func (s *Storage) FindUserByEmail(email string) (*models.User, error) {
+	return s.UserStorage.FindUserByEmail(email)
 }
