@@ -140,9 +140,25 @@ func (s *FileStorage) ListFiles(courseID string) ([]*models2.File, error) {
 				return nil, fmt.Errorf("failed to parse CreatedAt metadata: %w", err)
 			}
 
+			getInput := &s3.GetObjectInput{
+				Bucket: aws.String(s.bucket),
+				Key:    item.Key,
+			}
+			getResp, err := s.client.GetObject(context.Background(), getInput)
+			if err != nil {
+				return nil, fmt.Errorf("failed to download file from S3: %w", err)
+			}
+			defer getResp.Body.Close()
+
+			fileData, err := io.ReadAll(getResp.Body)
+			if err != nil {
+				return nil, fmt.Errorf("failed to read file data: %w", err)
+			}
+
 			file := &models2.File{
 				ID:        *item.Key,
 				CourseID:  headResp.Metadata[metaCourseID],
+				Content:   fileData,
 				Filename:  headResp.Metadata[metaFilename],
 				Publisher: models2.User{ID: headResp.Metadata[metaPublisherID]},
 				CreatedAt: timestamppb.New(createdAt),

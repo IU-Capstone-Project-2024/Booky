@@ -16,5 +16,6 @@ WORKDIR /root/
 
 COPY --from=builder /app/bin/booky .
 COPY --from=builder /app/.env .
+COPY --from=builder /app/.aws /root/.aws
 
 CMD ./booky -fileStorage=S3
